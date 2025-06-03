@@ -140,6 +140,19 @@ const scrollToBottom = async () => {
     }
 };
 
+const typewriterEffect = (text: string, targetIndex: number) => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+        if (currentIndex < text.length) {
+            messages.value[targetIndex].content = text.slice(0, currentIndex + 1);
+            currentIndex++;
+            scrollToBottom();
+        } else {
+            clearInterval(interval);
+        }
+    }, 30); // 调整速度
+};
+
 const sendMessage = async () => {
     if (!userInput.value.trim() || isLoading.value) return;
 
@@ -175,31 +188,37 @@ const sendMessage = async () => {
     isLoading.value = true;
 
     try {
-        // 只把 prompt 传给 AI，不显示在 UI
         const hiddenMessages = messages.value
-            .map(({ role, content }) => ({ role, content })) // 只保留 role 和 content
+            .map(({ role, content }) => ({ role, content }))
             .slice(0, -1)
             .concat([{ role: 'user' as const, content: prompt }]);
+
+        // 添加一个临时的 assistant 消息用于流式显示
+        const tempMessageIndex = messages.value.length;
+        messages.value.push({
+            role: 'assistant',
+            content: '',
+            suggestions: undefined
+        });
+
         await sendToQwenAIDialogue(
             hiddenMessages,
             (responseText, isComplete) => {
+                // 直接更新内容，不使用打字机效果
+                messages.value[tempMessageIndex].content = responseText;
                 if (isComplete) {
-                    const suggestions = extractSuggestions(responseText);
-                    messages.value.push({
-                        role: 'assistant',
-                        content: responseText,
-                        suggestions
-                    });
+                    messages.value[tempMessageIndex].suggestions = extractSuggestions(responseText);
                     isLoading.value = false;
-                    scrollToBottom();
                 }
+                scrollToBottom();
             }
         );
     } catch (error) {
-        messages.value.push({
+        const errorIndex = messages.value.length - 1;
+        messages.value[errorIndex] = {
             role: 'assistant',
             content: '抱歉，处理您的请求时出现错误。'
-        });
+        };
         isLoading.value = false;
         await scrollToBottom();
     }

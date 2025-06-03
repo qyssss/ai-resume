@@ -18,6 +18,11 @@ const router = createRouter({
       path: '/ai-agent',
       name: 'ai-agent',
       component: () => import('../views/AgentPage.vue')
+    },
+    {
+      path: '/interview',
+      name: 'interview',
+      component: () => import('../views/InterviewPage.vue')
     }
   ]
 })

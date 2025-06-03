@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full min-h-screen bg-gray-900">
+    <div class="w-full min-h-screen">
         <!-- 顶部导航栏 -->
         <nav class="w-full bg-gray-800 text-white shadow fixed top-0 left-0 z-50">
             <!-- 只让导航栏内容居中，不影响主内容区 -->
@@ -29,6 +29,7 @@ const $route = useRoute()
 const navs = [
     { label: 'Home', path: '/' },
     { label: 'Resume', path: '/resume' },
-    { label: 'AI Agent', path: '/ai-agent' }
+    { label: 'AI Agent', path: '/ai-agent' },
+    { label: 'Interview', path: '/interview' }
 ]
 </script>

@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
+    "@types/pdfmake": "^0.2.11",
     "element-plus": "^2.5.3",
     "html2pdf": "^0.0.11",
     "html2pdf.js": "0.10.2",
+    "pdfmake": "^0.2.20",
     "pinia": "^2.1.7",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5",

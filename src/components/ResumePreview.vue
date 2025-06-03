@@ -88,14 +88,14 @@ const pdfContent = ref<HTMLElement | null>(null)
 const draggableBox = ref<HTMLElement | null>(null)
 const boxStyle = reactive<CSSProperties>({
     left: '0px',
-    top: '100px',
+    top: '110px',
     position: 'fixed',
     zIndex: 50,
 })
 
 onMounted(() => {
-    // 让盒子初始居中
-    const width = 794
+    // 让盒子靠左
+    const width = 10
     const left = (window.innerWidth - width) / 2
     boxStyle.left = `${left}px`
 })
