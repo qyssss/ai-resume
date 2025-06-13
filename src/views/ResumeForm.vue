@@ -301,19 +301,19 @@ const handlePhotoChange = (file: any) => {
 }
 
 const beforePhotoUpload = async (file: File) => {
-    // 构造 FormData
     const formData = new FormData()
-    formData.append('smfile', file)
+    formData.append('file', file) // 这里用 file 字段，后端也用 file 字段接收
 
     try {
-        const res = await axios.post('https://sm.ms/api/v2/upload', formData, {
+        // 假设你的后端接口为 /api/upload
+        const res = await axios.post('/api/upload', formData, {
             headers: {
-                'Authorization': SMMS_TOKEN,
-                'Content-Type': 'multipart/form-data'
+                // 不要加 Content-Type，axios 会自动设置 multipart/form-data
             }
         })
-        if (res.data.success) {
-            resume.personal.photo = res.data.data.url // 设置图片URL
+        // 假设后端返回 { url: '图片地址' }
+        if (res.data && res.data.url) {
+            resume.personal.photo = res.data.url
             ElMessage.success('图片上传成功！')
         } else {
             ElMessage.error(res.data.message || '图片上传失败')
@@ -321,8 +321,7 @@ const beforePhotoUpload = async (file: File) => {
     } catch (err: any) {
         ElMessage.error('图片上传失败: ' + (err?.message || '未知错误'))
     }
-    // 阻止element-plus自动上传
-    return false
+    return false // 阻止 element-plus 自动上传
 }
 </script>
 
