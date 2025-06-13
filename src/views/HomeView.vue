@@ -25,10 +25,30 @@
               </router-link>
             </div>
           </div>
-          <button @click="startExperience"
-            class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition">
-            立即体验
-          </button>
+          <div class="flex items-center space-x-4">
+            <!-- 登录/注册按钮 -->
+            <button v-if="!userStore.isLoggedIn" @click="openAuthModal"
+              class="px-4 py-2 rounded-full bg-gray-800 text-white font-medium hover:bg-gray-700 transition">
+              登录/注册
+            </button>
+            <!-- 用户信息 -->
+            <div v-else class="flex items-center space-x-3">
+              <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center">
+                <span class="text-sm font-medium">{{ userStore.userInitial }}</span>
+              </div>
+              <span class="text-sm text-gray-300">{{ userStore.userInfo.username }}</span>
+              <button @click="handleLogout" class="text-gray-400 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </div>
+            <button @click="startExperience"
+              class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition">
+              立即体验
+            </button>
+          </div>
         </div>
       </div>
     </nav>
@@ -154,11 +174,25 @@
         </section>
       </div>
     </main>
+
+    <!-- 登录注册模态框 -->
+    <AuthModal :is-visible="showAuthModal" :external-error-message="authErrorMessage" @close="closeAuthModal"
+      @login="handleLogin" @register="handleRegister" />
+
+    <!-- 成功消息提示 -->
+    <div v-if="showSuccessMessage"
+      class="fixed top-0 left-0 right-0 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+      role="alert">
+      {{ successMessage }}
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import AuthModal from '@/components/AuthModal.vue'
+import { useUserStore } from '@/stores/user'
 import {
   SparklesIcon,
   PencilIcon,
@@ -170,6 +204,17 @@ import {
 
 const currentRoute = ref('/')
 const isHovering = ref(false)
+const showAuthModal = ref(false)
+const showSuccessMessage = ref(false)
+const successMessage = ref('')
+const authErrorMessage = ref('')
+
+// 路由相关
+const route = useRoute()
+const router = useRouter()
+
+// 使用用户store
+const userStore = useUserStore()
 
 const navigation = [
   { name: '产品功能', path: '/features' },
@@ -231,6 +276,105 @@ const startExperience = () => {
   // 跳转到体验页
   console.log('开始体验')
 }
+
+// 显示成功消息
+const showSuccess = (message) => {
+  successMessage.value = message
+  showSuccessMessage.value = true
+  setTimeout(() => {
+    showSuccessMessage.value = false
+  }, 3000)
+}
+
+// 关闭认证模态框
+const closeAuthModal = () => {
+  showAuthModal.value = false
+  authErrorMessage.value = '' // 清除错误信息
+
+  // 检查是否有重定向参数，登录成功后跳转
+  if (route.query.redirect) {
+    const redirectPath = String(route.query.redirect)
+    router.push(redirectPath)
+  }
+}
+
+// 打开认证模态框
+const openAuthModal = () => {
+  authErrorMessage.value = '' // 清除之前的错误信息
+  showAuthModal.value = true
+}
+
+// 登录处理
+const handleLogin = async (loginData) => {
+  // 清除之前的错误信息
+  authErrorMessage.value = ''
+
+  const result = await userStore.login(loginData)
+  if (result.success) {
+    showAuthModal.value = false
+    showSuccess('登录成功！欢迎回来')
+    console.log('登录成功')
+
+    // 登录成功后，如果有重定向参数，跳转到目标页面
+    if (route.query.redirect) {
+      const redirectPath = String(route.query.redirect)
+      router.push(redirectPath)
+    }
+  } else {
+    console.error('登录失败:', result.error)
+    // 设置新的错误信息
+    authErrorMessage.value = result.error
+  }
+}
+
+// 注册处理
+const handleRegister = async (registerData) => {
+  // 清除之前的错误信息
+  authErrorMessage.value = ''
+
+  const result = await userStore.register(registerData)
+  if (result.success) {
+    showAuthModal.value = false
+    showSuccess('注册成功！欢迎加入我们')
+    console.log('注册成功')
+
+    // 注册成功后，如果有重定向参数，跳转到目标页面
+    if (route.query.redirect) {
+      const redirectPath = String(route.query.redirect)
+      router.push(redirectPath)
+    }
+  } else {
+    console.error('注册失败:', result.error)
+    // 设置新的错误信息
+    authErrorMessage.value = result.error
+  }
+}
+
+// 登出处理
+const handleLogout = async () => {
+  const result = await userStore.logout()
+  if (result.success) {
+    showSuccess('已成功登出')
+    console.log('登出成功')
+  } else {
+    console.error('登出失败:', result.error)
+  }
+}
+
+// 监听路由参数变化
+watch(() => route.query, (newQuery) => {
+  if (newQuery.showLogin === 'true' && !userStore.isLoggedIn) {
+    // 显示登录提示
+    showSuccess('请先登录后访问该页面')
+    // 自动打开登录模态框
+    openAuthModal()
+  }
+}, { immediate: true })
+
+// 组件挂载时检查登录状态
+onMounted(() => {
+  userStore.checkLoginStatus()
+})
 </script>
 
 <style scoped>

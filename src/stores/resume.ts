@@ -10,7 +10,7 @@ export const useResumeStore = defineStore('resume', {
             degree: '硕士',
             phone: '13800138000',
             email: 'zhangsan@example.com',
-            photo: ''
+            photo: 'https://s2.loli.net/2022/09/13/PeC3yo16vgpu52j.jpg'
         },
         // IT技能
         skills: {

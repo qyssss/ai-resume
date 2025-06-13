@@ -2,6 +2,31 @@
     <el-row :gutter="32" class="pt-8">
         <el-col :span="12">
             <div class="bg-white rounded-2xl shadow-2xl p-10 min-h-[800px] w-full border border-gray-200">
+                <!-- 保存按钮区域 -->
+                <div class="mb-6 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-gray-800">简历编辑</h1>
+                    <div class="flex gap-3">
+                        <el-button type="primary" size="large" :loading="saving" @click="saveResume"
+                            :disabled="!isLoggedIn">
+                            <el-icon v-if="!saving">
+                                <Document />
+                            </el-icon>
+                            {{ saving ? '保存中...' : '保存简历' }}
+                        </el-button>
+                        <el-button type="success" size="large" :loading="loading" @click="loadResume"
+                            :disabled="!isLoggedIn">
+                            <el-icon v-if="!loading">
+                                <Download />
+                            </el-icon>
+                            {{ loading ? '加载中...' : '加载简历' }}
+                        </el-button>
+                    </div>
+                </div>
+
+                <!-- 未登录提示 -->
+                <el-alert v-if="!isLoggedIn" title="请先登录" description="登录后才能保存和加载简历信息" type="warning" :closable="false"
+                    class="mb-6" />
+
                 <el-form :model="resume" label-width="100px" class="space-y-8">
                     <!-- 个人信息 -->
                     <el-card header="个人信息" class="mb-6">
@@ -45,7 +70,7 @@
                         <el-row :gutter="20">
                             <el-col :span="8">
                                 <el-form-item label="照片">
-                                    <el-upload class="avatar-uploader" action="" :show-file-list="false"
+                                    <el-upload class="avatar-uploader" :show-file-list="false"
                                         :before-upload="beforePhotoUpload">
                                         <img v-if="resume.personal.photo" :src="resume.personal.photo" class="avatar" />
                                         <el-icon v-else>
@@ -149,14 +174,112 @@
 
 <script setup lang="ts">
 import { useResumeStore } from '@/stores/resume'
-import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { resumeApi } from '@/services/resume'
+import { ref, computed } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { Document, Download } from '@element-plus/icons-vue'
 import ResumePreview from '@/components/ResumePreview.vue'
+import axios from 'axios'
 
 const resume = useResumeStore()
+const userStore = useUserStore()
+
+// 响应式状态
+const saving = ref(false)
+const loading = ref(false)
+
+// 计算属性
+const isLoggedIn = computed(() => userStore.isLoggedIn)
 
 const skillOptions = [
     'C/C++', 'Python', 'TensorFlow', 'Office', 'Linux', 'MATLAB', 'Caffe', 'Vue', 'JavaScript', 'TypeScript', 'Element Plus', 'TailwindCSS'
 ]
+
+const SMMS_TOKEN = 'IFBldSrcoBITPadg7v6HSJfw3RekT6Am'
+// 保存简历
+const saveResume = async () => {
+    if (!isLoggedIn.value) {
+        ElMessage.warning('请先登录')
+        return
+    }
+
+    try {
+        saving.value = true
+
+        // 验证必填字段
+        if (!resume.personal.name || !resume.personal.email) {
+            ElMessage.error('请填写姓名和邮箱')
+            return
+        }
+        // 调用API保存简历
+        await resumeApi.saveResume({
+            personal: resume.personal,
+            skills: resume.skills,
+            education: resume.education,
+            experiences: resume.experiences,
+            honors: resume.honors,
+            selfEvaluation: resume.selfEvaluation
+        })
+
+        ElMessage.success('简历保存成功！')
+    } catch (error: any) {
+        console.error('保存简历失败:', error)
+
+        // 显示具体错误信息
+        let errorMessage = '保存失败，请重试'
+        if (error.response?.data?.message) {
+            errorMessage = error.response.data.message
+        } else if (error.message) {
+            errorMessage = error.message
+        }
+
+        ElMessage.error(errorMessage)
+    } finally {
+        saving.value = false
+    }
+}
+
+// 加载简历
+const loadResume = async () => {
+    if (!isLoggedIn.value) {
+        ElMessage.warning('请先登录')
+        return
+    }
+
+    try {
+        loading.value = true
+
+        const resumeData = await resumeApi.getResume()
+
+        // 更新store中的数据
+        if (resumeData.personal) resume.personal = resumeData.personal
+        if (resumeData.skills) resume.skills = resumeData.skills
+        if (resumeData.education) resume.education = resumeData.education
+        if (resumeData.experiences) resume.experiences = resumeData.experiences
+        if (resumeData.honors) resume.honors = resumeData.honors
+        if (resumeData.selfEvaluation) resume.selfEvaluation = resumeData.selfEvaluation
+
+        ElMessage.success('简历加载成功！')
+    } catch (error: any) {
+        console.error('加载简历失败:', error)
+
+        // 如果是404错误，说明用户还没有保存过简历
+        if (error.response?.status === 404) {
+            ElMessage.info('您还没有保存过简历，请先填写并保存')
+        } else {
+            let errorMessage = '加载失败，请重试'
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message
+            } else if (error.message) {
+                errorMessage = error.message
+            }
+            ElMessage.error(errorMessage)
+        }
+    } finally {
+        loading.value = false
+    }
+}
 
 // 动态增删
 const addEducation = () => resume.education.push({ school: '', major: '', degree: '', score: '' })
@@ -177,13 +300,28 @@ const handlePhotoChange = (file: any) => {
     reader.readAsDataURL(file.raw)
 }
 
-const beforePhotoUpload = (file: any) => {
-    const reader = new FileReader()
-    reader.onload = (e: any) => {
-        resume.personal.photo = e.target.result
+const beforePhotoUpload = async (file: File) => {
+    // 构造 FormData
+    const formData = new FormData()
+    formData.append('smfile', file)
+
+    try {
+        const res = await axios.post('https://sm.ms/api/v2/upload', formData, {
+            headers: {
+                'Authorization': SMMS_TOKEN,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        if (res.data.success) {
+            resume.personal.photo = res.data.data.url // 设置图片URL
+            ElMessage.success('图片上传成功！')
+        } else {
+            ElMessage.error(res.data.message || '图片上传失败')
+        }
+    } catch (err: any) {
+        ElMessage.error('图片上传失败: ' + (err?.message || '未知错误'))
     }
-    reader.readAsDataURL(file)
-    // 阻止自动上传
+    // 阻止element-plus自动上传
     return false
 }
 </script>
