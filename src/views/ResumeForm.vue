@@ -306,7 +306,7 @@ const beforePhotoUpload = async (file: File) => {
 
     try {
         // 假设你的后端接口为 /api/upload
-        const res = await axios.post('/api/upload', formData, {
+        const res = await axios.post('http://127.0.0.1:8000/api/resume/photoUpload', formData, {
             headers: {
                 // 不要加 Content-Type，axios 会自动设置 multipart/form-data
             }

@@ -222,4 +222,43 @@ Authorization: Bearer <token>
 2. **简历导出**：支持PDF、Word等格式导出
 3. **简历分享**：生成分享链接
 4. **版本管理**：支持简历版本历史
-5. **AI优化**：提供简历内容优化建议 
+5. **AI优化**：提供简历内容优化建议
+
+## 头像上传与展示（sm.ms 图床）
+
+### 功能描述
+
+- 用户可在简历编辑页面上传个人照片，照片将托管在 sm.ms 图床，并在简历预览中实时展示。
+
+### 实现流程
+
+1. **前端上传**：用户选择图片后，前端将图片文件通过 POST 请求上传到后端 `/api/upload` 接口。
+2. **后端代理**：后端收到图片后，将其转发上传到 sm.ms 图床（需配置 sm.ms token），并将返回的图片 URL 传回前端。
+3. **简历数据保存**：前端将图片 URL 存入简历数据的 `personal.photo` 字段，随简历一同保存。
+
+### 前端代码片段
+
+```typescript
+// 上传图片到后端代理接口
+async function uploadPhoto(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append('smfile', file);
+  const response = await http.post('/api/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  // 返回图片 URL
+  return response.data.data.url;
+}
+```
+
+- 上传成功后，将图片 URL 赋值到 `resume.personal.photo` 字段，并在简历预览中通过 `<img :src="resume.personal.photo" />` 展示。
+
+### 后端代理说明
+
+- 由于 sm.ms 不支持浏览器直接跨域上传，需由后端实现 `/api/upload` 接口，将图片转发到 sm.ms 并返回图片 URL。
+- 后端需配置 sm.ms token，并处理 sm.ms API 的响应和错误。
+
+### 错误处理
+
+- 上传失败时，前端会显示错误提示（如"图片上传失败，请重试"）。
+- 后端需处理 sm.ms 返回的错误信息，并返回友好提示。 
