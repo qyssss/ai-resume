@@ -30,6 +30,7 @@ const navs = [
     { label: 'Home', path: '/' },
     { label: 'Resume', path: '/resume' },
     { label: 'AI Agent', path: '/ai-agent' },
-    { label: 'Interview', path: '/interview' }
+    { label: 'Interview', path: '/interview' },
+    { label: 'Job Center', path: '/jobs' }
 ]
 </script>

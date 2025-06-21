@@ -24,25 +24,25 @@
                             'flex-1 py-4 text-sm font-medium transition',
                             activeTab === 'login'
                                 ? 'text-white bg-purple-600'
-                                : 'text-gray-800 hover:text-white hover:bg-gray-700'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                         ]">
-                            登录
+                            Login
                         </button>
                         <button @click="activeTab = 'register'" :class="[
                             'flex-1 py-4 text-sm font-medium transition',
                             activeTab === 'register'
                                 ? 'text-white bg-purple-600'
-                                : 'text-gray-800 hover:text-white hover:bg-gray-700'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                         ]">
-                            注册
+                            Register
                         </button>
                     </div>
 
                     <!-- 登录表单 -->
                     <div v-if="activeTab === 'login'" class="p-8">
                         <div class="text-center mb-8">
-                            <h2 class="text-2xl font-bold text-white mb-2">欢迎回来</h2>
-                            <p class="text-gray-400">登录您的账户继续使用</p>
+                            <h2 class="text-2xl font-bold text-white mb-2">Welcome Back</h2>
+                            <p class="text-gray-400">Log in to your account to continue</p>
                         </div>
 
                         <!-- 错误提示 -->
@@ -52,19 +52,19 @@
 
                         <form @submit.prevent="handleLogin" class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">邮箱地址</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
                                 <input v-model="loginForm.email" type="email" required
                                     class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                                    placeholder="请输入邮箱地址" />
+                                    placeholder="Enter your email address" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
                                 <div class="relative">
                                     <input v-model="loginForm.password" :type="showLoginPassword ? 'text' : 'password'"
                                         required
                                         class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition pr-12"
-                                        placeholder="请输入密码" />
+                                        placeholder="Enter your password" />
                                     <button type="button" @click="showLoginPassword = !showLoginPassword"
                                         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition">
                                         <svg v-if="showLoginPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -87,9 +87,9 @@
                                 <label class="flex items-center">
                                     <input type="checkbox" v-model="loginForm.remember"
                                         class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-2">
-                                    <span class="ml-2 text-sm text-gray-300">记住我</span>
+                                    <span class="ml-2 text-sm text-gray-300">Remember me</span>
                                 </label>
-                                <!-- <a href="#" class="text-sm text-purple-400 hover:text-purple-300 transition">忘记密码？</a> -->
+                                <!-- <a href="#" class="text-sm text-purple-400 hover:text-purple-300 transition">Forgot password?</a> -->
                             </div>
 
                             <button type="submit" :disabled="isLoading"
@@ -103,17 +103,17 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
-                                    登录中...
+                                    Logging in...
                                 </span>
-                                <span v-else>登录</span>
+                                <span v-else>Login</span>
                             </button>
                         </form>
 
                         <div class="mt-6 text-center">
                             <p class="text-gray-400 text-sm">
-                                还没有账户？
+                                Don't have an account?
                                 <button @click="activeTab = 'register'"
-                                    class="text-purple-400 hover:text-purple-300 transition">立即注册</button>
+                                    class="text-purple-400 hover:text-purple-300 transition">Register now</button>
                             </p>
                         </div>
                     </div>
@@ -121,8 +121,8 @@
                     <!-- 注册表单 -->
                     <div v-if="activeTab === 'register'" class="p-8">
                         <div class="text-center mb-8">
-                            <h2 class="text-2xl font-bold text-white mb-2">创建账户</h2>
-                            <p class="text-gray-400">加入我们，开始您的AI简历之旅</p>
+                            <h2 class="text-2xl font-bold text-white mb-2">Create Account</h2>
+                            <p class="text-gray-400">Join us to start your AI resume journey</p>
                         </div>
 
                         <!-- 错误提示 -->
@@ -132,26 +132,26 @@
 
                         <form @submit.prevent="handleRegister" class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">用户名</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
                                 <input v-model="registerForm.username" type="text" required
                                     class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                                    placeholder="请输入用户名" />
+                                    placeholder="Enter your username" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">邮箱地址</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
                                 <input v-model="registerForm.email" type="email" required
                                     class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                                    placeholder="请输入邮箱地址" />
+                                    placeholder="Enter your email address" />
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">密码</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
                                 <div class="relative">
                                     <input v-model="registerForm.password"
                                         :type="showRegisterPassword ? 'text' : 'password'" required
                                         class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition pr-12"
-                                        placeholder="请输入密码" />
+                                        placeholder="Enter your password" />
                                     <button type="button" @click="showRegisterPassword = !showRegisterPassword"
                                         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition">
                                         <svg v-if="showRegisterPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -171,12 +171,12 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">确认密码</label>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
                                 <div class="relative">
                                     <input v-model="registerForm.confirmPassword"
                                         :type="showConfirmPassword ? 'text' : 'password'" required
                                         class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition pr-12"
-                                        placeholder="请再次输入密码" />
+                                        placeholder="Enter your password again" />
                                     <button type="button" @click="showConfirmPassword = !showConfirmPassword"
                                         class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition">
                                         <svg v-if="showConfirmPassword" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
@@ -199,10 +199,12 @@
                                 <input type="checkbox" v-model="registerForm.agreeTerms" required
                                     class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-2">
                                 <label class="ml-2 text-sm text-gray-300">
-                                    我同意
-                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">服务条款</a>
-                                    和
-                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">隐私政策</a>
+                                    I agree to the
+                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">Terms of
+                                        Service</a>
+                                    and
+                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">Privacy
+                                        Policy</a>
                                 </label>
                             </div>
 
@@ -217,17 +219,17 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                         </path>
                                     </svg>
-                                    注册中...
+                                    Registering...
                                 </span>
-                                <span v-else>创建账户</span>
+                                <span v-else>Create Account</span>
                             </button>
                         </form>
 
                         <div class="mt-6 text-center">
                             <p class="text-gray-400 text-sm">
-                                已有账户？
+                                Already have an account?
                                 <button @click="activeTab = 'login'"
-                                    class="text-purple-400 hover:text-purple-300 transition">立即登录</button>
+                                    class="text-purple-400 hover:text-purple-300 transition">Login now</button>
                             </p>
                         </div>
                     </div>
@@ -321,7 +323,7 @@ const showError = (message) => {
 
 const handleLogin = async () => {
     if (!loginForm.value.email || !loginForm.value.password) {
-        showError('请填写邮箱和密码')
+        showError('Please fill in both email and password')
         return
     }
 
@@ -339,8 +341,8 @@ const handleLogin = async () => {
         // 注意：实际的登录结果处理在父组件中，这里只是触发事件
         // 如果登录失败，父组件会通过externalErrorMessage传递错误信息
     } catch (error) {
-        console.error('登录失败:', error)
-        showError('登录失败，请重试')
+        console.error('Login failed:', error)
+        showError('Login failed, please try again')
     } finally {
         isLoading.value = false
     }
@@ -348,22 +350,22 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
     if (!registerForm.value.username || !registerForm.value.email || !registerForm.value.password || !registerForm.value.confirmPassword) {
-        showError('请填写所有必填字段')
+        showError('Please fill in all required fields')
         return
     }
 
     if (!isPasswordMatch.value) {
-        showError('两次输入的密码不一致')
+        showError('The passwords do not match')
         return
     }
 
     if (!registerForm.value.agreeTerms) {
-        showError('请同意服务条款和隐私政策')
+        showError('Please agree to the Terms of Service and Privacy Policy')
         return
     }
 
     if (registerForm.value.password.length < 6) {
-        showError('密码长度至少6位')
+        showError('Password must be at least 6 characters long')
         return
     }
 
@@ -381,8 +383,8 @@ const handleRegister = async () => {
         // 注意：实际的注册结果处理在父组件中，这里只是触发事件
         // 如果注册失败，父组件会通过externalErrorMessage传递错误信息
     } catch (error) {
-        console.error('注册失败:', error)
-        showError('注册失败，请重试')
+        console.error('Registration failed:', error)
+        showError('Registration failed, please try again')
     } finally {
         isLoading.value = false
     }

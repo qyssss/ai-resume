@@ -262,3 +262,27 @@ async function uploadPhoto(file: File): Promise<string> {
 
 - 上传失败时，前端会显示错误提示（如"图片上传失败，请重试"）。
 - 后端需处理 sm.ms 返回的错误信息，并返回友好提示。 
+
+const beforePhotoUpload = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file) // 这里用 file 字段，后端也用 file 字段接收
+
+    try {
+        // 假设你的后端接口为 /api/upload
+        const res = await axios.post('http://127.0.0.1:8000/api/resume/photoUpload', formData, {
+            headers: {
+                // 不要加 Content-Type，axios 会自动设置 multipart/form-data
+            }
+        })
+        // 假设后端返回 { url: '图片地址' }
+        if (res.data && res.data.url) {
+            resume.personal.photo = res.data.url
+            ElMessage.success('图片上传成功！')
+        } else {
+            ElMessage.error(res.data.message || '图片上传失败')
+        }
+    } catch (err: any) {
+        ElMessage.error('图片上传失败: ' + (err?.message || '未知错误'))
+    }
+    return false // 阻止 element-plus 自动上传
+}

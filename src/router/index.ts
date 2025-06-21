@@ -44,6 +44,30 @@ const router = createRouter({
       meta: {
         requiresAuth: false // 登录页面不需要认证
       }
+    },
+    {
+      path: '/features',
+      name: 'features',
+      component: () => import('../views/FeaturesView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/cases',
+      name: 'cases',
+      component: () => import('../views/CaseStudiesView.vue'),
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: '/jobs',
+      name: 'jobs',
+      component: () => import('../views/JobCenter.vue'),
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
@@ -96,5 +120,8 @@ router.beforeEach(async (to, from, next) => {
   // 其他情况正常通过
   next()
 })
-
+// 切换页面后保持滚动到顶部
+router.afterEach((to, from) => {
+  window.scrollTo(0, 0);
+});
 export default router

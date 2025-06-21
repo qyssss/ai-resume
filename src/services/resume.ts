@@ -80,8 +80,29 @@ export const resumeApi = {
             })
             return response.data
         } catch (error) {
-
             console.error('更新简历失败:', error)
+            throw error
+        }
+    },
+
+    // 删除简历信息
+    async deleteResume() {
+        try {
+            const response: any = await http.delete('/api/resume/delete')
+            return response.data
+        } catch (error) {
+            console.error('删除简历失败:', error)
+            throw error
+        }
+    },
+
+    // AI优化简历
+    async optimizeResume() {
+        try {
+            const response: any = await http.post('/api/resume/optimize')
+            return response.data
+        } catch (error) {
+            console.error('AI优化简历失败:', error)
             throw error
         }
     }

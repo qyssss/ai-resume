@@ -29,7 +29,7 @@
             <!-- 登录/注册按钮 -->
             <button v-if="!userStore.isLoggedIn" @click="openAuthModal"
               class="px-4 py-2 rounded-full bg-gray-800 text-white font-medium hover:bg-gray-700 transition">
-              登录/注册
+              Login/Register
             </button>
             <!-- 用户信息 -->
             <div v-else class="flex items-center space-x-3">
@@ -46,7 +46,7 @@
             </div>
             <button @click="startExperience"
               class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition">
-              立即体验
+              Try Now
             </button>
           </div>
         </div>
@@ -63,20 +63,22 @@
         <section class="flex flex-col md:flex-row items-center justify-between py-20">
           <div class="md:w-1/2 mb-12 md:mb-0">
             <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
-              <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">AI智能简历</span>
-              <br>让HR一眼相中你
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-blue-400">AI Smart
+                Resume</span>
+              <br>Make HR Notice You at First Sight
             </h1>
             <p class="text-xl text-gray-300 mb-8">
-              基于大语言模型的智能简历优化系统，通过率提升<span class="text-purple-400 font-bold">300%</span>
+              AI-powered resume optimization system based on large language models, increasing success rate by <span
+                class="text-purple-400 font-bold">300%</span>
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
               <button @click="startCreating"
                 class="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold hover:shadow-xl hover:shadow-purple-500/30 transition transform hover:-translate-y-1">
-                开始创建 →
+                Start Creating →
               </button>
-              <button
+              <button @click="watchDemo"
                 class="px-8 py-4 rounded-xl bg-gray-800 text-white font-bold border border-gray-700 hover:bg-gray-700 transition">
-                观看演示
+                Watch Demo
               </button>
             </div>
             <div class="mt-8 flex items-center space-x-4">
@@ -84,7 +86,7 @@
                 <img v-for="(avatar, index) in userAvatars" :key="index" :src="avatar"
                   class="w-10 h-10 rounded-full border-2 border-gray-800" />
               </div>
-              <span class="text-gray-400 text-sm">已有 <span class="text-white">12,853</span> 位用户使用</span>
+              <span class="text-gray-400 text-sm">Already used by <span class="text-white">12,853</span> users</span>
             </div>
           </div>
 
@@ -98,8 +100,8 @@
                 :class="{ 'animate-float': isHovering }" @mouseenter="isHovering = true"
                 @mouseleave="isHovering = false">
                 <div class="flex justify-between items-center mb-6">
-                  <h3 class="text-xl font-bold">AI优化简历</h3>
-                  <span class="px-3 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">通过率92%</span>
+                  <h3 class="text-xl font-bold">AI Optimized Resume</h3>
+                  <span class="px-3 py-1 bg-green-900/50 text-green-400 rounded-full text-xs">92% Success Rate</span>
                 </div>
                 <div class="space-y-4">
                   <div v-for="item in resumePreview" :key="item.title" class="flex items-start">
@@ -121,12 +123,13 @@
                       </svg>
                     </div>
                     <div class="ml-3">
-                      <p class="text-xs text-gray-400">AI建议</p>
-                      <p class="text-sm font-medium">添加项目数据</p>
+                      <p class="text-xs text-gray-400">AI Suggestion</p>
+                      <p class="text-sm font-medium">Add project metrics</p>
                     </div>
                   </div>
-                  <button class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-full transition">
-                    立即优化
+                  <button @click="navigateToOptimize"
+                    class="text-xs bg-gray-300 hover:bg-gray-600 px-3 py-1 rounded-full transition">
+                    Optimize Now
                   </button>
                 </div>
               </div>
@@ -137,8 +140,10 @@
         <!-- 核心功能展示 -->
         <section class="py-20">
           <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4">打造完美简历的<span class="text-purple-400">全流程解决方案</span></h2>
-            <p class="text-gray-400 max-w-2xl mx-auto">从简历创建到面试准备，AI助手全程陪伴</p>
+            <h2 class="text-3xl font-bold mb-4">Complete Solution for <span class="text-purple-400">Perfect
+                Resume</span></h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">From resume creation to interview preparation, AI assistant
+              accompanies you throughout</p>
           </div>
 
           <div class="grid md:grid-cols-3 gap-8">
@@ -149,8 +154,9 @@
               </div>
               <h3 class="text-xl font-bold mb-3">{{ feature.title }}</h3>
               <p class="text-gray-400 mb-4">{{ feature.description }}</p>
-              <button class="text-sm flex items-center text-purple-400 hover:text-purple-300 transition">
-                了解更多
+              <button @click="navigateToFeature(feature.title)"
+                class="text-sm flex items-center text-purple-500 hover:text-purple-800 transition">
+                Learn More
                 <svg class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -162,7 +168,7 @@
         <!-- 动态数据展示 -->
         <section class="py-16 bg-gray-800/30 rounded-3xl mb-20">
           <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8 text-center">
+            <div class="grid md:grid-cols-3 gap-8 text-center">
               <div v-for="stat in stats" :key="stat.id" class="p-6">
                 <div class="text-4xl font-bold mb-2" :class="stat.color">
                   <span v-if="stat.plus">+</span>{{ stat.value }}<span v-if="stat.percent">%</span>
@@ -189,7 +195,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AuthModal from '@/components/AuthModal.vue'
 import { useUserStore } from '@/stores/user'
@@ -217,9 +223,8 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const navigation = [
-  { name: '产品功能', path: '/features' },
-  { name: '案例展示', path: '/cases' },
-  { name: '定价方案', path: '/pricing' }
+  { name: 'Features', path: '/features' },
+  { name: 'Case Studies', path: '/cases' },
 ]
 
 const userAvatars = [
@@ -230,51 +235,76 @@ const userAvatars = [
 ]
 
 const resumePreview = [
-  { title: '工作经历', content: '腾讯 · 高级前端工程师', color: 'bg-blue-400' },
-  { title: '教育背景', content: '清华大学 · 计算机科学', color: 'bg-purple-400' },
-  { title: '技术栈', content: 'Vue, React, Node.js', color: 'bg-green-400' },
-  { title: '项目经验', content: '3个完整项目经历', color: 'bg-yellow-400' }
+  { title: 'Work Experience', content: 'Google · Backend Software Engineer', color: 'bg-blue-400' },
+  { title: 'Education', content: 'The University of Hong Kong · Computer Science', color: 'bg-purple-400' },
+  { title: 'Tech Stack', content: 'Java, Spring Boot, Django, PostgreSQL, Docker, Kubernetes', color: 'bg-green-400' },
+  { title: 'Projects', content: '1 Complete Project Experiences', color: 'bg-yellow-400' }
 ]
 
 const features = [
   {
     icon: SparklesIcon,
-    title: '智能生成',
-    description: '上传现有简历或空白创建，AI自动生成专业简历内容',
+    title: 'Resume Generation',
+    description: 'Fill out the form to generate a polished resume with one click, supporting PDF export.',
     bgColor: 'bg-purple-500/20',
     iconColor: 'text-purple-400'
   },
   {
     icon: PencilIcon,
-    title: 'AI润色',
-    description: '根据目标职位智能优化内容，突出核心竞争力',
+    title: 'AI Enhancement',
+    description: 'Intelligently optimize content based on target position, highlighting core competitiveness',
     bgColor: 'bg-blue-500/20',
     iconColor: 'text-blue-400'
   },
   {
     icon: ChatBubbleLeftEllipsisIcon,
-    title: '模拟面试',
-    description: '行业专属面试题库，AI模拟真实面试场景',
+    title: 'Mock Interview',
+    description: 'Industry-specific interview question bank, AI simulates real interview scenarios',
     bgColor: 'bg-green-500/20',
     iconColor: 'text-green-400'
   }
 ]
 
 const stats = [
-  { id: 1, value: '300', plus: true, percent: true, label: '简历通过率提升', color: 'text-purple-400' },
-  { id: 2, value: '12', label: '行业模板选择', color: 'text-blue-400' },
-  { id: 3, value: '98', percent: true, label: '用户满意度', color: 'text-green-400' },
-  { id: 4, value: '5', label: '分钟快速生成', color: 'text-yellow-400' }
+  { id: 1, value: '300', plus: true, percent: true, label: 'Resume Success Rate Increase', color: 'text-purple-400' },
+  { id: 2, value: '98', percent: true, label: 'User Satisfaction', color: 'text-green-400' },
+  { id: 3, value: '5', label: 'Minutes to Generate', color: 'text-yellow-400' }
 ]
 
 const startCreating = () => {
   // 跳转到简历创建页
-  console.log('开始创建简历')
+  router.push('/resume')
 }
 
 const startExperience = () => {
-  // 跳转到体验页
-  console.log('开始体验')
+  // 跳转到AI助手页面
+  router.push('/resume')
+}
+
+// 观看演示（暂时显示提示）
+const watchDemo = () => {
+  router.push('/features')
+  showSuccess('Demo feature coming soon!')
+}
+
+// 功能卡片导航
+const navigateToFeature = (featureType) => {
+  switch (featureType) {
+    case 'Smart Generation':
+    case 'AI Enhancement':
+      router.push('/resume')
+      break
+    case 'Mock Interview':
+      router.push('/interview')
+      break
+    default:
+      router.push('/resume')
+  }
+}
+
+// 优化按钮导航
+const navigateToOptimize = () => {
+  router.push('/resume')
 }
 
 // 显示成功消息
@@ -312,8 +342,8 @@ const handleLogin = async (loginData) => {
   const result = await userStore.login(loginData)
   if (result.success) {
     showAuthModal.value = false
-    showSuccess('登录成功！欢迎回来')
-    console.log('登录成功')
+    showSuccess('Login successful! Welcome back')
+    console.log('Login successful')
 
     // 登录成功后，如果有重定向参数，跳转到目标页面
     if (route.query.redirect) {
@@ -321,7 +351,7 @@ const handleLogin = async (loginData) => {
       router.push(redirectPath)
     }
   } else {
-    console.error('登录失败:', result.error)
+    console.error('Login failed:', result.error)
     // 设置新的错误信息
     authErrorMessage.value = result.error
   }
@@ -335,8 +365,8 @@ const handleRegister = async (registerData) => {
   const result = await userStore.register(registerData)
   if (result.success) {
     showAuthModal.value = false
-    showSuccess('注册成功！欢迎加入我们')
-    console.log('注册成功')
+    showSuccess('Registration successful! Welcome to join us')
+    console.log('Registration successful')
 
     // 注册成功后，如果有重定向参数，跳转到目标页面
     if (route.query.redirect) {
@@ -344,7 +374,7 @@ const handleRegister = async (registerData) => {
       router.push(redirectPath)
     }
   } else {
-    console.error('注册失败:', result.error)
+    console.error('Registration failed:', result.error)
     // 设置新的错误信息
     authErrorMessage.value = result.error
   }
@@ -354,10 +384,10 @@ const handleRegister = async (registerData) => {
 const handleLogout = async () => {
   const result = await userStore.logout()
   if (result.success) {
-    showSuccess('已成功登出')
-    console.log('登出成功')
+    showSuccess('Successfully logged out')
+    console.log('Logout successful')
   } else {
-    console.error('登出失败:', result.error)
+    console.error('Logout failed:', result.error)
   }
 }
 
@@ -365,7 +395,7 @@ const handleLogout = async () => {
 watch(() => route.query, (newQuery) => {
   if (newQuery.showLogin === 'true' && !userStore.isLoggedIn) {
     // 显示登录提示
-    showSuccess('请先登录后访问该页面')
+    showSuccess('Please login first to access this page')
     // 自动打开登录模态框
     openAuthModal()
   }
@@ -383,6 +413,7 @@ onMounted(() => {
   background-size: 400% 400%;
   animation: gradient 15s ease infinite;
 }
+
 
 @keyframes gradient {
   0% {
