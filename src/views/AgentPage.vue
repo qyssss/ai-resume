@@ -25,8 +25,9 @@
                             'px-8 py-3 rounded-xl font-medium transition-all duration-300',
                             currentMode === 'resume'
                                 ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                                : 'text-gray-600 hover:text-white hover:bg-gray-700/50'
-                        ]" @click="switchMode('resume')">
+                                : 'text-gray-600 hover:text-white hover:bg-gray-700/50',
+                            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                        ]" @click="switchMode('resume')" :disabled="isLoading">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -39,8 +40,9 @@
                             'px-8 py-3 rounded-xl font-medium transition-all duration-300',
                             currentMode === 'interview'
                                 ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/30'
-                                : 'text-gray-600 hover:text-white hover:bg-gray-700/50'
-                        ]" @click="switchMode('interview')">
+                                : 'text-gray-600 hover:text-white hover:bg-gray-700/50',
+                            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                        ]" @click="switchMode('interview')" :disabled="isLoading">
                             <div class="flex items-center space-x-2">
                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -439,6 +441,16 @@ onMounted(() => {
 /* 按钮悬停效果 */
 button:hover {
     transform: translateY(-1px);
+}
+
+/* 禁用状态样式 */
+button:disabled {
+    transform: none !important;
+    pointer-events: none;
+}
+
+button:disabled:hover {
+    transform: none !important;
 }
 
 /* 输入框焦点效果 */
