@@ -32,6 +32,9 @@
                     </svg>
                     <p class="text-lg font-semibold text-gray-100">Click or drag a PDF file here to upload</p>
                     <p class="text-gray-400 text-sm">Only PDF format is supported</p>
+                    <p class="text-red-400 text-sm mt-2">
+                        Only text-based PDF resumes are supported. Scanned or image-based PDFs are not supported.
+                    </p>
                 </div>
             </div>
             <div v-if="uploadError" class="text-red-400 bg-red-900/50 p-3 rounded-lg my-4">
@@ -226,6 +229,12 @@ const handleFile = async (file: File) => {
         isLoading.value = true
         uploadError.value = ''
         const response = await axios.post(`${API_BASE_URL}/api/upload-resume`, formData)
+        if (!response.data.message || response.data.message.trim() === '') {
+            uploadError.value = 'Failed to extract text. Please upload a text-based PDF. Scanned/image-based PDFs are not supported.'
+            fileInfo.value = null
+            resumeText.value = ''
+            return
+        }
         resumeText.value = response.data.message
         fileInfo.value = {
             name: file.name,

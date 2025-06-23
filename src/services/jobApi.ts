@@ -33,8 +33,8 @@ export const jobApi = {
      * @description GET请求后端的 /api/jobs/recommend 路由
      * @returns Promise<JobRecommendation[]> - 返回岗位推荐列表
      */
-    getJobRecommendations: (): Promise<JobRecommendation[]> => {
-        return http.get('/api/jobs/recommend');
+    getJobRecommendations: (params: { resumeHash: string }): Promise<JobRecommendation[]> => {
+        return http.post('/api/jobs/recommend', params);
     },
 
     /**

@@ -6,9 +6,11 @@
             <el-col :span="12" class="pt-14">
                 <div class="bg-white rounded-2xl shadow-2xl p-10 min-h-[800px] w-full border border-gray-200">
                     <!-- 保存按钮区域 -->
-                    <div class="mb-6 flex justify-between items-center">
-                        <h1 class="text-2xl font-bold text-gray-800">Edit Resume</h1>
-                        <div class="flex gap-3">
+
+                    <div class="mb-6 flex flex-col gap-4">
+                        <!-- 标题和AI优化按钮同一行 -->
+                        <div class="flex items-center gap-4 justify-center">
+                            <h1 class="text-2xl font-bold text-gray-800">Edit Resume</h1>
                             <el-button type="primary" plain size="large" @click="handleOptimize" :loading="optimizing"
                                 :disabled="!isLoggedIn">
                                 <el-icon>
@@ -16,6 +18,9 @@
                                 </el-icon>
                                 {{ optimizing ? 'Optimizing...' : 'AI Optimize' }}
                             </el-button>
+                        </div>
+                        <!-- 其他操作按钮一行 -->
+                        <div class="flex flex-wrap gap-4 justify-center">
                             <el-button type="primary" size="large" :loading="saving" @click="saveResume"
                                 :disabled="!isLoggedIn">
                                 <el-icon v-if="!saving">
@@ -36,6 +41,12 @@
                                     <Delete />
                                 </el-icon>
                                 {{ clearing ? 'Clearing...' : 'Clear Resume' }}
+                            </el-button>
+                            <el-button type="warning" size="large" @click="resetToInitial" :disabled="!isLoggedIn">
+                                <el-icon>
+                                    <Refresh />
+                                </el-icon>
+                                Reset to Example
                             </el-button>
                         </div>
                     </div>
@@ -205,7 +216,7 @@ import { useUserStore } from '@/stores/user'
 import { resumeApi } from '@/services/resume'
 import { ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Document, Download, Delete, MagicStick } from '@element-plus/icons-vue'
+import { Document, Download, Delete, MagicStick, Refresh } from '@element-plus/icons-vue'
 import ResumePreview from '@/components/ResumePreview.vue'
 import OptimizeModal from '@/components/OptimizeModal.vue'
 import axios from 'axios'
@@ -342,7 +353,7 @@ const clearResume = async () => {
             console.log('Resume data successfully deleted from server.');
         } catch (serverError: any) {
             console.error('Failed to delete resume from server:', serverError);
-            const errorMessage = serverError.response?.data?.message || 'Could not delete saved resume from the server. Please try again.';
+            const errorMessage = serverError.response?.data?.message || 'You have already deleted the resume from the server. Please save a new resume.';
             ElMessage.error(errorMessage);
         } finally {
             clearing.value = false;
@@ -402,32 +413,58 @@ const beforePhotoUpload = async (file: File) => {
 
 const handleOptimize = async () => {
     if (!isLoggedIn.value) {
-        ElMessage.warning('请先登录再使用AI优化功能。');
+        ElMessage.warning('Please log in before using the AI optimization feature.');
         return;
     }
     optimizing.value = true;
     try {
-        // 调用真实的API接口获取优化建议
+        // Call the real API to get optimization suggestions
         const optimizedData = await resumeApi.optimizeResume();
 
-        // 使用返回的数据填充对比模态框
+        // Fill the comparison modal with the returned data
         originalResumeState.value = JSON.parse(JSON.stringify(resume.$state));
         optimizedResumeState.value = optimizedData;
 
         showOptimizeModal.value = true;
 
     } catch (error) {
-        ElMessage.error('获取AI优化建议失败，请稍后重试。');
-        console.error("请求简历优化建议时出错:", error);
+        ElMessage.error('Failed to get AI optimization suggestions. Please try again later.');
+        console.error("Error occurred while requesting resume optimization suggestions:", error);
     } finally {
         optimizing.value = false;
     }
 }
 
-const handleAcceptOptimization = (optimizedData: any) => {
+const handleAcceptOptimization = async (optimizedData: any) => {
     resume.updateResume(optimizedData);
+    // Ask user if they want to save the optimized resume
+    try {
+        await ElMessageBox.confirm(
+            'Do you want to save the optimized resume?',
+            'Save Optimized Resume',
+            {
+                confirmButtonText: 'Save',
+                cancelButtonText: 'Cancel',
+                type: 'info',
+                center: true,
+            }
+        );
+        await saveResume();
+    } catch (error) {
+        if (error === 'cancel') {
+            ElMessage.info('Save action canceled');
+        } else {
+            console.error('An unexpected error occurred during the save process:', error);
+        }
+    }
     ElMessage.success('Resume updated with AI optimizations!');
 }
+
+const resetToInitial = () => {
+    resume.resetResumeToInitial();
+    ElMessage.success('Resume reset to initial values!');
+}
+
 </script>
 
 <style scoped>

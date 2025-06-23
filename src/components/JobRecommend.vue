@@ -48,27 +48,71 @@
 import { ref, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { jobApi, type JobRecommendation } from '@/services/jobApi';
+import md5 from 'blueimp-md5';
+import { useResumeStore } from '@/stores/resume';
 
 const loading = ref(true);
 const recommendedJobs = ref<JobRecommendation[]>([]);
 const selectedJob = ref<JobRecommendation | null>(null);
 const drawerVisible = ref(false);
 
-/**
- * @description 调用API获取岗位推荐数据
- */
+const resumeStore = useResumeStore();
+
+// 批量翻译函数
+async function translateBatch(texts: string[], target = 'en'): Promise<string[]> {
+    const apiKey = 'AIzaSyD0XBD2m-vvfmpl4UhZdt9lk2rHCxfRHrQ';
+    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: texts, target })
+    });
+    const data = await res.json();
+    return data.data.translations.map((t: any) => t.translatedText);
+}
+
+function decodeHtmlEntities(str: string): string {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+}
+
 const fetchRecommendations = async () => {
     loading.value = true;
     try {
-        // 调用真实的API接口
-        recommendedJobs.value = await jobApi.getJobRecommendations();
-        if (recommendedJobs.value.length === 0) {
-            ElMessage.info("暂无合适的岗位推荐，请先完善并保存您的简历。");
+        const resumeSnapshot = JSON.stringify(resumeStore.$state);
+        const resumeHash = md5(resumeSnapshot);
+
+        const jobs = await jobApi.getJobRecommendations({ resumeHash });
+
+        for (const job of jobs) {
+            const fieldsToTranslate = [
+                job.title,
+                job.company,
+                job.location,
+                job.salary,
+                job.reason,
+                job.description,
+                ...job.tags
+            ];
+            const translated = await translateBatch(fieldsToTranslate, 'en');
+            job.title = decodeHtmlEntities(translated[0]);
+            job.company = decodeHtmlEntities(translated[1]);
+            job.location = decodeHtmlEntities(translated[2]);
+            job.salary = decodeHtmlEntities(translated[3]);
+            job.reason = decodeHtmlEntities(translated[4]);
+            job.description = decodeHtmlEntities(translated[5]);
+            job.tags = translated.slice(6).map(decodeHtmlEntities);
+        }
+
+        recommendedJobs.value = jobs;
+        if (jobs.length === 0) {
+            ElMessage.info("No suitable job recommendations. Please complete and save your resume first.");
         }
     } catch (error) {
-        console.error("获取岗位推荐失败:", error);
-        ElMessage.error("获取岗位推荐失败，请稍后重试。");
-        recommendedJobs.value = []; // 发生错误时清空列表
+        console.error("Failed to fetch job recommendations:", error);
+        ElMessage.error("Failed to fetch job recommendations. Please try again later.");
+        recommendedJobs.value = [];
     } finally {
         loading.value = false;
     }
@@ -80,7 +124,7 @@ onMounted(() => {
 
 watch(selectedJob, (newVal: JobRecommendation | null) => {
     drawerVisible.value = !!newVal;
-})
+});
 </script>
 
 <style scoped>

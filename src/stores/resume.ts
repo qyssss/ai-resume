@@ -89,8 +89,30 @@ const getInitialState = () => ({
     selfEvaluation: 'A passionate backend developer with a strong interest in building scalable and reliable distributed systems. Proficient in Java, Python, and modern backend frameworks. Experienced in microservices architecture, containerization, and cloud technologies. A quick learner and a collaborative team player, eager to tackle challenging problems and contribute to innovative projects.'
 })
 
+function getEmptyState() {
+    return {
+        personal: {
+            name: '',
+            gender: '',
+            email: '',
+            age: '',
+            phone: '',
+            degree: '',
+            photo: ''
+        },
+        skills: {
+            proficient: [],
+            familiar: []
+        },
+        education: [],
+        experiences: [],
+        honors: [],
+        selfEvaluation: ''
+    }
+}
+
 export const useResumeStore = defineStore('resume', {
-    state: getInitialState,
+    state: () => getInitialState(),
     getters: {
         getResume(state): ReturnType<typeof getInitialState> {
             return state;
@@ -101,7 +123,23 @@ export const useResumeStore = defineStore('resume', {
             Object.assign(this, newResume)
         },
         clearResumeData() {
+            Object.assign(this, structuredClone(getEmptyState()));
+        },
+        resetResumeToInitial() {
             Object.assign(this, structuredClone(getInitialState()));
         },
     }
 })
+
+async function translateBatch(texts: string[], target = 'en'): Promise<string[]> {
+    const apiKey = 'AIzaSyD0XBD2m-vvfmpl4UhZdt9lk2rHCxfRHrQ';
+    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ q: texts, target })
+    });
+    const data = await res.json();
+    return data.data.translations.map((t: any) => t.translatedText);
+}
+

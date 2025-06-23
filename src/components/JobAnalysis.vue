@@ -1,32 +1,38 @@
 <template>
     <div class="job-analysis-container">
         <el-input v-model="jobDescription" type="textarea" :rows="10"
-            placeholder="Paste the full job description here to analyze it against your saved resume." class="mb-4" />
-        <el-button type="primary" size="large" @click="analyzeJob" :loading="loading" class="w-full">
+            placeholder="Paste the full job description here to analyze it against your saved resume." class="mb-4 "
+            style=" font-size: 18px;" />
+        <el-button type="primary" size="large" @click="analyzeJob" :loading="loading" class="w-full text-lg">
             Analyze Job Fit
         </el-button>
 
-        <div v-if="analysisResult" class="mt-8 result-container">
-            <el-descriptions title="Analysis Report" :column="2" border>
-                <el-descriptions-item label="Overall Match Score" label-align="right" align="center"
-                    label-class-name="my-label" class-name="my-content" width="150px">
-                    <el-progress type="dashboard" :percentage="analysisResult.matchScore" :color="progressColors" />
-                </el-descriptions-item>
-                <el-descriptions-item label="AI Summary" label-align="right" align="left">
+        <div v-if="analysisResult" class="mt-8 result-container ">
+            <el-card class="mb-6">
+                <div class="text-2xl font-bold mb-4 text-blue-700">Analysis Report</div>
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="flex-1">
+                        <div class="font-semibold text-purple-500 mb-2">Strengths (Resume Highlights)</div>
+                        <ul class="list-disc pl-5">
+                            <li v-for="strength in analysisResult.strengths" :key="strength">{{ strength }}</li>
+                        </ul>
+                    </div>
+                    <div class="flex-1">
+                        <div class="font-semibold text-purple-500 mb-2">Areas for Improvement</div>
+                        <ul class="list-disc pl-5">
+                            <li v-for="gap in analysisResult.gaps" :key="gap">{{ gap }}</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <div class="font-semibold text-purple-500 mb-2">AI Summary</div>
                     <p>{{ analysisResult.summary }}</p>
-                </el-descriptions-item>
-
-                <el-descriptions-item label="Strengths (Resume Highlights)" label-align="right" align="left">
-                    <ul class="list-disc pl-5">
-                        <li v-for="strength in analysisResult.strengths" :key="strength">{{ strength }}</li>
-                    </ul>
-                </el-descriptions-item>
-                <el-descriptions-item label="Areas for Improvement" label-align="right" align="left">
-                    <ul class="list-disc pl-5">
-                        <li v-for="gap in analysisResult.gaps" :key="gap">{{ gap }}</li>
-                    </ul>
-                </el-descriptions-item>
-            </el-descriptions>
+                </div>
+                <div class="mt-6">
+                    <div class="font-semibold text-purple-500 mb-2">Overall Match Score</div>
+                    <el-progress type="dashboard" :percentage="analysisResult.matchScore" :color="progressColors" />
+                </div>
+            </el-card>
         </div>
     </div>
 </template>
@@ -81,5 +87,10 @@ const analyzeJob = async () => {
     background-color: #374151;
     color: #e5e7eb;
     border-color: #4b5563;
+}
+
+.el-descriptions__title {
+    color: #3366ff;
+    /* 蓝色标题 */
 }
 </style>
