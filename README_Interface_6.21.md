@@ -1,4 +1,5 @@
-# 大模型返回尽可能使用英语
+# 给后端看的，需要的接口内容
+## 大模型返回尽可能使用英语
 
 ## services/resume.ts 在views/ResumeForm里使用
 ### 删除简历信息 /api/resume/delete
