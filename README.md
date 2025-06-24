@@ -1,3 +1,4 @@
+## Vue3 + Typescript + Pinia + Vite + Tailwind CSS + Element Plus开发脚手架
 
 ## 脚手架技术栈简介
 
