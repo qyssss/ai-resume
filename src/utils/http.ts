@@ -1,7 +1,7 @@
 import { useUserStore } from '@/stores/user'
+import { API_BASE_URL } from '@/utils/config'
 
 // API基础配置
-const API_BASE_URL = 'http://127.0.0.1:8000'
 
 // 请求拦截器
 function createRequestInterceptor() {

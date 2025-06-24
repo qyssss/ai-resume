@@ -222,7 +222,7 @@ import { Document, Download, Delete, MagicStick, Refresh } from '@element-plus/i
 import ResumePreview from '@/components/ResumePreview.vue'
 import OptimizeModal from '@/components/OptimizeModal.vue'
 import axios from 'axios'
-
+import { API_BASE_URL } from '@/utils/config';
 const resume = useResumeStore()
 const userStore = useUserStore()
 
@@ -382,10 +382,9 @@ const handlePhotoChange = (file: any) => {
 const beforePhotoUpload = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file) // 这里用 file 字段，后端也用 file 字段接收
-
     try {
         // 假设你的后端接口为 /api/upload
-        const res = await axios.post('http://127.0.0.1:8000/api/resume/photoUpload', formData, {
+        const res = await axios.post(`${API_BASE_URL}/api/resume/photoUpload`, formData, {
             headers: {
                 // 不要加 Content-Type，axios 会自动设置 multipart/form-data
             }

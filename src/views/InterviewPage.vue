@@ -184,7 +184,7 @@ import { ref, onMounted, nextTick, watch } from 'vue'
 import axios from 'axios'
 
 // API 基础 URL
-const API_BASE_URL = 'http://127.0.0.1:8000'
+import { API_BASE_URL } from '@/utils/config';
 
 // 状态变量
 const interviewStarted = ref(false)
