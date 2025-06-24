@@ -28,7 +28,7 @@ function createResponseInterceptor() {
             // Token过期或无效，清除用户状态
             const userStore = useUserStore()
             await userStore.logout()
-            throw new Error('认证失败，请重新登录')
+            throw new Error('Authentication failed, please log in again')
         }
 
         return response
@@ -68,7 +68,7 @@ export class HttpClient {
             const processedResponse = await this.responseInterceptor(response)
 
             if (!processedResponse.ok) {
-                const errorData = await processedResponse.json().catch(() => ({ error: '请求失败' }))
+                const errorData = await processedResponse.json().catch(() => ({ error: 'Request failed' }))
                 throw new Error(errorData.error || `HTTP error! status: ${processedResponse.status}`)
             }
 

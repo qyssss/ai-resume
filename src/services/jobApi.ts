@@ -30,11 +30,11 @@ export interface AnalysisReport {
 export const jobApi = {
     /**
      * 获取AI岗位推荐
-     * @description GET请求后端的 /api/jobs/recommend 路由
+     * @description POST请求后端的 /api/jobs/recommend 路由
      * @returns Promise<JobRecommendation[]> - 返回岗位推荐列表
      */
-    getJobRecommendations: (params: { resumeHash: string }): Promise<JobRecommendation[]> => {
-        return http.post('/api/jobs/recommend', params);
+    getJobRecommendations: (): Promise<JobRecommendation[]> => {
+        return http.post('/api/jobs/recommend');
     },
 
     /**

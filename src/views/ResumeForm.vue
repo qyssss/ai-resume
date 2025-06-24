@@ -143,10 +143,11 @@
                                     <el-col :span="10"><el-form-item label="Score"><el-input
                                                 v-model="edu.score" /></el-form-item></el-col>
                                 </el-row>
-                                <el-button type="danger" size="small" @click="removeEducation(idx)"
+                                <el-button type="danger" size="small" @click="resume.removeEducation(idx)"
                                     v-if="resume.education.length > 1">Delete</el-button>
                             </div>
-                            <el-button type="primary" size="small" @click="addEducation">Add Education</el-button>
+                            <el-button type="primary" size="small" @click="resume.addEducation">Add
+                                Education</el-button>
                         </el-card>
 
                         <!-- 项目/实习经历 -->
@@ -166,10 +167,11 @@
                                 </el-row>
                                 <el-form-item label="Content"><el-input v-model="exp.content"
                                         type="textarea" /></el-form-item>
-                                <el-button type="danger" size="small" @click="removeExperience(idx)"
+                                <el-button type="danger" size="small" @click="resume.removeExperience(idx)"
                                     v-if="resume.experiences.length > 1">Delete</el-button>
                             </div>
-                            <el-button type="primary" size="small" @click="addExperience">Add Experience</el-button>
+                            <el-button type="primary" size="small" @click="resume.addExperience">Add
+                                Experience</el-button>
                         </el-card>
 
                         <!-- 竞赛/获奖/论文 -->
@@ -185,10 +187,10 @@
                                 </el-row>
                                 <el-form-item label="Description"><el-input v-model="honor.description"
                                         type="textarea" /></el-form-item>
-                                <el-button type="danger" size="small" @click="removeHonor(idx)"
+                                <el-button type="danger" size="small" @click="resume.removeHonor(idx)"
                                     v-if="resume.honors.length > 1">Delete</el-button>
                             </div>
-                            <el-button type="primary" size="small" @click="addHonor">Add</el-button>
+                            <el-button type="primary" size="small" @click="resume.addHonor">Add</el-button>
                         </el-card>
 
                         <!-- 自我评价 -->
@@ -367,16 +369,6 @@ const clearResume = async () => {
         }
     }
 }
-
-// 动态增删
-const addEducation = () => resume.education.push({ school: '', major: '', degree: '', score: '' })
-const removeEducation = (idx: number) => resume.education.splice(idx, 1)
-
-const addExperience = () => resume.experiences.push({ type: 'Internship', name: '', company: '', period: '', content: '', result: '' })
-const removeExperience = (idx: number) => resume.experiences.splice(idx, 1)
-
-const addHonor = () => resume.honors.push({ type: '', title: '', date: '', description: '' })
-const removeHonor = (idx: number) => resume.honors.splice(idx, 1)
 
 // 照片上传（这里只做本地预览）
 const handlePhotoChange = (file: any) => {

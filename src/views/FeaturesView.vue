@@ -81,7 +81,7 @@ const detailedFeatures = [
             "Professionally designed templates.",
             "Generate a resume in minutes, not hours."
         ],
-        image: 'https://s2.loli.net/2025/06/21/QmqtJbGlgs6SHwn.png',
+        image: 'https://s2.loli.net/2025/06/24/hvLXGHbQSIKWk5M.png',
         bgColor: 'bg-purple-500/20',
         iconColor: 'text-purple-400'
     },
@@ -98,6 +98,7 @@ const detailedFeatures = [
         image: 'https://s2.loli.net/2025/06/21/NEtndoHXCyeKiJg.png',
         bgColor: 'bg-blue-500/20',
         iconColor: 'text-blue-400'
+
     },
     {
         icon: ChatBubbleLeftEllipsisIcon,

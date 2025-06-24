@@ -77,7 +77,7 @@ const analyzeJob = async () => {
 };
 </script>
 
-<style>
+<style scoped>
 .result-container .el-descriptions__label {
     color: #a78bfa !important;
     font-weight: bold;

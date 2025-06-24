@@ -48,7 +48,6 @@
 import { ref, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { jobApi, type JobRecommendation } from '@/services/jobApi';
-import md5 from 'blueimp-md5';
 import { useResumeStore } from '@/stores/resume';
 
 const loading = ref(true);
@@ -80,10 +79,8 @@ function decodeHtmlEntities(str: string): string {
 const fetchRecommendations = async () => {
     loading.value = true;
     try {
-        const resumeSnapshot = JSON.stringify(resumeStore.$state);
-        const resumeHash = md5(resumeSnapshot);
 
-        const jobs = await jobApi.getJobRecommendations({ resumeHash });
+        const jobs = await jobApi.getJobRecommendations();
 
         for (const job of jobs) {
             const fieldsToTranslate = [

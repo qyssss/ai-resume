@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 
-const getInitialState = () => ({
+export function getInitialState() {
     // Personal Information
-    personal: {
+    const personal = {
         name: 'Backend Developer',
         gender: 'Male',
         age: '28',
@@ -10,9 +10,9 @@ const getInitialState = () => ({
         phone: '852-6666-6666',
         email: 'john.doe@google.com',
         photo: 'https://s2.loli.net/2022/09/13/PeC3yo16vgpu52j.jpg'
-    },
+    }
     // IT Skills
-    skills: {
+    const skills = {
         proficient: [
             'Java',
             'Spring Boot',
@@ -29,9 +29,9 @@ const getInitialState = () => ({
             'Redis',
             'Kafka'
         ]
-    },
+    }
     // Education
-    education: [
+    const education = [
         {
             school: 'The University of Hong Kong',
             major: 'Computer Science',
@@ -44,9 +44,9 @@ const getInitialState = () => ({
             degree: 'Bachelor',
             score: 'GPA: 3.8/4.0'
         }
-    ],
+    ]
     // Work Experience / Projects
-    experiences: [
+    const experiences = [
         {
             type: 'Work Experience',
             name: 'Backend Software Engineer',
@@ -63,9 +63,9 @@ const getInitialState = () => ({
             content: 'Built a backend system for an e-commerce platform with features like user authentication, product management, and order processing, using Python and Django.',
             result: 'Implemented a message queue using RabbitMQ for asynchronous order handling. The project is open-sourced on GitHub with 200+ stars.'
         }
-    ],
+    ]
     // Competitions / Awards / Publications
-    honors: [
+    const honors = [
         {
             type: 'Competition',
             title: 'ACM Contest',
@@ -84,10 +84,19 @@ const getInitialState = () => ({
             date: '2024.12',
             description: 'Recognized for outstanding academic performance in the Computer Science department.'
         }
-    ],
+    ]
     // Self-Evaluation
-    selfEvaluation: 'A passionate backend developer with a strong interest in building scalable and reliable distributed systems. Proficient in Java, Python, and modern backend frameworks. Experienced in microservices architecture, containerization, and cloud technologies. A quick learner and a collaborative team player, eager to tackle challenging problems and contribute to innovative projects.'
-})
+    const selfEvaluation = 'A passionate backend developer with a strong interest in building scalable and reliable distributed systems. Proficient in Java, Python, and modern backend frameworks. Experienced in microservices architecture, containerization, and cloud technologies. A quick learner and a collaborative team player, eager to tackle challenging problems and contribute to innovative projects.'
+
+    return {
+        personal,
+        skills,
+        education,
+        experiences,
+        honors,
+        selfEvaluation
+    }
+}
 
 function getEmptyState() {
     return {
@@ -128,6 +137,28 @@ export const useResumeStore = defineStore('resume', {
         resetResumeToInitial() {
             Object.assign(this, structuredClone(getInitialState()));
         },
+        addEducation() {
+            this.education.push({ school: '', major: '', degree: '', score: '' });
+        },
+        removeEducation(idx: number) {
+            this.education.splice(idx, 1);
+        },
+
+        addExperience() {
+            this.experiences.push({ type: 'Internship', name: '', company: '', period: '', content: '', result: '' });
+        },
+        removeExperience(idx: number) {
+            this.experiences.splice(idx, 1);
+        },
+
+        addHonor() {
+            this.honors.push({ type: '', title: '', date: '', description: '' });
+        },
+        removeHonor(idx: number) {
+            this.honors.splice(idx, 1);
+        },
+
+
     }
 })
 

@@ -62,19 +62,19 @@ export const useUserStore = defineStore('user', () => {
                 return { success: true }
             } else {
                 // 返回具体的错误信息
-                return { success: false, error: result.error || '登录失败，请检查邮箱和密码' }
+                return { success: false, error: result.error || 'Login failed, please check your email and password' }
             }
         } catch (error) {
             console.error('登录失败:', error)
             // 根据错误类型返回具体的错误信息
-            let errorMessage = '登录失败，请重试'
+            let errorMessage = 'Login failed, please try again'
             if (error instanceof Error) {
                 if (error.message.includes('Invalid credentials')) {
-                    errorMessage = '邮箱或密码错误'
+                    errorMessage = 'Incorrect email or password'
                 } else if (error.message.includes('Email and password required')) {
-                    errorMessage = '请填写邮箱和密码'
+                    errorMessage = 'Please enter your email and password'
                 } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage = '网络连接失败，请检查网络设置'
+                    errorMessage = 'Network connection failed, please check your network settings'
                 } else {
                     errorMessage = error.message
                 }
@@ -102,17 +102,17 @@ export const useUserStore = defineStore('user', () => {
                 return loginResult
             } else {
                 // 返回具体的错误信息
-                return { success: false, error: result.error || '注册失败，请重试' }
+                return { success: false, error: result.error || 'Registration failed, please try again' }
             }
         } catch (error) {
             console.error('注册失败:', error)
             // 根据错误类型返回具体的错误信息
-            let errorMessage = '注册失败，请重试'
+            let errorMessage = 'Registration failed, please try again'
             if (error instanceof Error) {
                 if (error.message.includes('Email already exists')) {
-                    errorMessage = '该邮箱已被注册，请使用其他邮箱或直接登录'
+                    errorMessage = 'This email has already been registered, please use another email or log in directly'
                 } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage = '网络连接失败，请检查网络设置'
+                    errorMessage = 'Network connection failed, please check your network settings'
                 } else {
                     errorMessage = error.message
                 }
@@ -134,10 +134,15 @@ export const useUserStore = defineStore('user', () => {
             }
             authToken.value = ''
 
+            // 清除 localStorage
+            localStorage.removeItem('authToken')
+            localStorage.removeItem('userInfo')
+            localStorage.removeItem('isLoggedIn')
+
             return { success: true }
         } catch (error) {
             console.error('登出失败:', error)
-            return { success: false, error: error instanceof Error ? error.message : '登出失败' }
+            return { success: false, error: error instanceof Error ? error.message : 'Logout failed' }
         }
     }
 

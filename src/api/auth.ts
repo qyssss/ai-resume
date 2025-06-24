@@ -18,17 +18,17 @@ export const authAPI = {
             }
         } catch (error) {
             // 解析具体的错误信息
-            let errorMessage = '注册失败'
+            let errorMessage = 'Registration failed'
             if (error instanceof Error) {
                 // 尝试从错误信息中提取具体的错误
                 if (error.message.includes('Email already exists')) {
-                    errorMessage = '该邮箱已被注册，请使用其他邮箱或直接登录'
+                    errorMessage = 'This email has already been registered, please use another email or log in directly'
                 } else if (error.message.includes('400')) {
-                    errorMessage = '请求参数错误，请检查输入信息'
+                    errorMessage = 'Request parameter error, please check your input information'
                 } else if (error.message.includes('500')) {
-                    errorMessage = '服务器内部错误，请稍后重试'
+                    errorMessage = 'Internal server error, please try again later'
                 } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage = '网络连接失败，请检查网络设置'
+                    errorMessage = 'Network connection failed, please check your network settings'
                 } else {
                     errorMessage = error.message
                 }
@@ -63,19 +63,19 @@ export const authAPI = {
             }
         } catch (error) {
             // 解析具体的错误信息
-            let errorMessage = '登录失败'
+            let errorMessage = 'Login failed'
             if (error instanceof Error) {
                 // 尝试从错误信息中提取具体的错误
                 if (error.message.includes('Invalid credentials')) {
-                    errorMessage = '邮箱或密码错误'
+                    errorMessage = 'Incorrect email or password'
                 } else if (error.message.includes('Email and password required')) {
-                    errorMessage = '请填写邮箱和密码'
+                    errorMessage = 'Please enter your email and password'
                 } else if (error.message.includes('401')) {
-                    errorMessage = '认证失败，请检查邮箱和密码'
+                    errorMessage = 'Authentication failed, please check your email and password'
                 } else if (error.message.includes('400')) {
-                    errorMessage = '请求参数错误，请检查输入信息'
+                    errorMessage = 'Request parameter error, please check your input information'
                 } else if (error.message.includes('Failed to fetch')) {
-                    errorMessage = '网络连接失败，请检查网络设置'
+                    errorMessage = 'Network connection failed, please check your network settings'
                 } else {
                     errorMessage = error.message
                 }
@@ -100,7 +100,7 @@ export const authAPI = {
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : '登出失败',
+                error: error instanceof Error ? error.message : 'Logout failed',
             }
         }
     },
@@ -121,19 +121,19 @@ export const authAPI = {
                 } catch (error) {
                     return {
                         success: false,
-                        error: '用户信息解析失败',
+                        error: 'Failed to parse user information',
                     }
                 }
             }
 
             return {
                 success: false,
-                error: '用户未登录',
+                error: 'User not logged in',
             }
         } catch (error) {
             return {
                 success: false,
-                error: error instanceof Error ? error.message : '获取用户信息失败',
+                error: error instanceof Error ? error.message : 'Failed to get user information',
             }
         }
     },
