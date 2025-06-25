@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@heroicons/vue": "^2.2.0",
     "@types/pdfmake": "^0.2.11",
     "axios": "^1.9.0",

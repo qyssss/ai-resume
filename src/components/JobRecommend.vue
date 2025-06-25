@@ -29,15 +29,16 @@
 
         <el-drawer v-model="drawerVisible" :title="selectedJob?.title" size="40%">
             <div v-if="selectedJob" class="p-4">
-                <h4 class="text-lg font-semibold">{{ selectedJob.company }} - {{ selectedJob.location }}</h4>
-                <p class="text-md text-green-400 mt-2">{{ selectedJob.salary }}</p>
+                <h4 class="text-lg font-semibold text-gray-700">{{ selectedJob.company }} - {{ selectedJob.location }}
+                </h4>
+                <p class="text-md text-green-400 mt-2 text-lg">{{ selectedJob.salary }}</p>
                 <div class="mt-6">
-                    <h5 class="font-bold mb-2">Why you're a good fit (AI Analysis):</h5>
-                    <p class="text-gray-300 bg-gray-700 p-3 rounded-md">{{ selectedJob.reason }}</p>
+                    <h5 class="font-bold mb-2 text-gray-700 text-lg">Why you're a good fit (AI Analysis):</h5>
+                    <p class="text-gray-300 bg-gray-700 p-3 rounded-md text-lg">{{ selectedJob.reason }}</p>
                 </div>
                 <div class="mt-6">
-                    <h5 class="font-bold mb-2">Full Job Description:</h5>
-                    <p class="text-gray-400 whitespace-pre-wrap">{{ selectedJob.description }}</p>
+                    <h5 class="font-bold mb-2 text-gray-700 text-lg">Full Job Description:</h5>
+                    <p class="text-gray-800 whitespace-pre-wrap text-lg">{{ selectedJob.description }}</p>
                 </div>
             </div>
         </el-drawer>

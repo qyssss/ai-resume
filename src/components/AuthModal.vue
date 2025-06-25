@@ -1,4 +1,37 @@
 <template>
+    <!-- Terms of Service 弹窗 -->
+    <div v-if="showTermsModal" class="fixed inset-0 flex items-center justify-center bg-black/50" style="z-index:9999">
+        <div class="bg-white rounded-lg p-6 max-w-lg w-full relative">
+            <button @click="showTermsModal = false"
+                class="absolute top-2 right-2 text-gray-500 hover:text-black">✕</button>
+            <h2 class="text-lg font-bold mb-4 text-gray-950">Terms of Service</h2>
+            <div class="text-gray-900 text-sm">
+                <p>Welcome to our platform. By creating an account or using our services, you agree to comply with all
+                    applicable laws and regulations. You are responsible for maintaining the confidentiality of your
+                    account credentials and for all activities that occur under your account. Unauthorized use or access
+                    to the platform is strictly prohibited. We reserve the right to suspend or terminate accounts that
+                    violate our terms or engage in fraudulent, abusive, or illegal activities. For more details, please
+                    contact our support team.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Privacy Policy 弹窗 -->
+    <div v-if="showPrivacyModal" class="fixed inset-0 flex items-center justify-center bg-black/50"
+        style="z-index:9999">
+        <div class="bg-white rounded-lg p-6 max-w-lg w-full relative">
+            <button @click="showPrivacyModal = false"
+                class="absolute top-2 right-2 text-gray-500 hover:text-black">✕</button>
+            <h2 class="text-lg font-bold mb-4 text-gray-950">Privacy Policy</h2>
+            <div class="text-gray-900 text-sm">
+                <p>Your privacy is important to us. We collect and process your personal information solely for the
+                    purpose of providing and improving our services. We do not share your data with third parties except
+                    as required by law or with your explicit consent. All data is stored securely and access is
+                    restricted to authorized personnel only. You have the right to access, update, or delete your
+                    personal information at any time. For further information, please review our full privacy policy or
+                    contact our data protection officer.</p>
+            </div>
+        </div>
+    </div>
     <div v-if="isVisible" class="fixed inset-0 z-50 overflow-y-auto">
         <!-- 背景遮罩 -->
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="closeModal"></div>
@@ -200,11 +233,11 @@
                                     class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-2">
                                 <label class="ml-2 text-sm text-gray-300">
                                     I agree to the
-                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">Terms of
-                                        Service</a>
+                                    <a href="#" @click.prevent="showTermsModal = true"
+                                        class="text-purple-400 hover:text-purple-300 transition">Terms of Service</a>
                                     and
-                                    <a href="#" class="text-purple-400 hover:text-purple-300 transition">Privacy
-                                        Policy</a>
+                                    <a href="#" @click.prevent="showPrivacyModal = true"
+                                        class="text-purple-400 hover:text-purple-300 transition">Privacy Policy</a>
                                 </label>
                             </div>
 
@@ -265,6 +298,8 @@ const showLoginPassword = ref(false)
 const showRegisterPassword = ref(false)
 const showConfirmPassword = ref(false)
 const errorMessage = ref('')
+const showTermsModal = ref(false)
+const showPrivacyModal = ref(false)
 
 // 监听外部错误信息
 watch(() => props.externalErrorMessage, (newError) => {
