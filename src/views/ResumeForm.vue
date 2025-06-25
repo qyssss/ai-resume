@@ -408,12 +408,12 @@ const handleOptimize = async () => {
         return;
     }
     optimizing.value = true;
+    // 1. 创建优化任务，拿到task_id
+    const startRes = await resumeApi.optimizeResumeStart();
+    console.log('optimizeResumeStart 返回：', startRes);
     try {
-        // 1. 创建优化任务，拿到task_id
-        const startRes = await resumeApi.optimizeResumeStart();
-        const taskId = startRes.task_id;
-        if (!taskId) throw new Error('Failed to get task_id');
-
+        const taskId = startRes?.task_id;
+        if (!taskId) throw new Error('Failed to get task_id, response: ' + JSON.stringify(startRes));
         // 2. 轮询获取优化结果
         let pollCount = 0;
         const maxPoll = 60; // 最多轮询60次（约1分钟）
@@ -440,6 +440,7 @@ const handleOptimize = async () => {
         console.error('Error occurred while requesting resume optimization suggestions:', error);
     } finally {
         optimizing.value = false;
+
     }
 }
 
