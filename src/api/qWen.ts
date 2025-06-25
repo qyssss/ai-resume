@@ -1,7 +1,9 @@
 import type { DialogueHistory } from "../types/aiDialogue";
 import { WorkerPool } from "../worker/workerPool";
 
-const API_URL = "/compatible-mode/v1/chat/completions";
+// const API_URL = "/compatible-mode/v1/chat/completions";
+
+const API_URL = import.meta.env.VITE_DASHSCOPE_API_URL || "/compatible-mode/v1/chat/completions";
 const userApiKey = "sk-5f7305fdcb094f40b701e5c9bb5ed12d";
 const model = "qwen-turbo";
 // 创建线程池
