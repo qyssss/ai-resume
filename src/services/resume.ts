@@ -100,7 +100,8 @@ export const resumeApi = {
     async optimizeResumeStart() {
         try {
             const response: any = await http.post('/api/resume/optimize/')
-            return response.data // 应返回 { task_id: ... }
+            console.log('http.post 返回：', response)
+            return response.data
         } catch (error) {
             console.error('AI优化简历任务创建失败:', error)
             throw error
