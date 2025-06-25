@@ -109,7 +109,10 @@ const fetchRecommendations = async () => {
         }
     } catch (error) {
         console.error("Failed to fetch job recommendations:", error);
-        ElMessage.error("Failed to fetch job recommendations. Please try again later.");
+        ElMessage.error({
+            message: "Failed to fetch job recommendations. Please try again later.",
+            duration: 1500
+        });
         recommendedJobs.value = [];
     } finally {
         loading.value = false;

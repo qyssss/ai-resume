@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import HomeView from '@/views/HomeView.vue'
-
+/* 暂时开放路由守卫，用于测试，后续需要关闭 */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -18,7 +18,7 @@ const router = createRouter({
       name: 'resume',
       component: () => import('../views/ResumeForm.vue'),
       meta: {
-        requiresAuth: false // 需要登录才能访问
+        requiresAuth: true // 需要登录才能访问
       }
     },
     {
@@ -26,7 +26,7 @@ const router = createRouter({
       name: 'ai-agent',
       component: () => import('../views/AgentPage.vue'),
       meta: {
-        requiresAuth: false // 需要登录才能访问
+        requiresAuth: true // 需要登录才能访问
       }
     },
     {
@@ -34,7 +34,7 @@ const router = createRouter({
       name: 'interview',
       component: () => import('../views/InterviewPage.vue'),
       meta: {
-        requiresAuth: false // 需要登录才能访问
+        requiresAuth: true // 需要登录才能访问
       }
     },
     {
@@ -66,7 +66,7 @@ const router = createRouter({
       name: 'jobs',
       component: () => import('../views/JobCenter.vue'),
       meta: {
-        requiresAuth: false  // 需要登录才能访问
+        requiresAuth: true  // 需要登录才能访问
       }
     }
   ]
