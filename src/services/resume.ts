@@ -96,13 +96,23 @@ export const resumeApi = {
         }
     },
 
-    // AI优化简历
-    async optimizeResume() {
+    // AI优化简历（新：异步任务模式）
+    async optimizeResumeStart() {
         try {
-            const response: any = await http.post('/api/resume/optimize')
-            return response.data
+            const response: any = await http.post('/api/resume/optimize/')
+            return response.data // 应返回 { task_id: ... }
         } catch (error) {
-            console.error('AI优化简历失败:', error)
+            console.error('AI优化简历任务创建失败:', error)
+            throw error
+        }
+    },
+
+    async optimizeResumePoll(taskId: number) {
+        try {
+            const response: any = await http.get(`/api/resume/optimize/${taskId}/`)
+            return response.data // 应返回 { status: ..., result: ... }
+        } catch (error) {
+            console.error('AI优化简历任务轮询失败:', error)
             throw error
         }
     }
