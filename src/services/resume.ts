@@ -110,7 +110,7 @@ export const resumeApi = {
     async optimizeResumePoll(taskId: number) {
         try {
             const response: any = await http.get(`/api/resume/optimize/${taskId}/`)
-            return response.data // 应返回 { status: ..., result: ... }
+            return response
         } catch (error) {
             console.error('AI优化简历任务轮询失败:', error)
             throw error
