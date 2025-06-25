@@ -208,6 +208,7 @@ import {
   UserGroupIcon
 } from '@heroicons/vue/24/outline'
 
+// 响应式状态
 const currentRoute = ref('/')
 const isHovering = ref(false)
 const showAuthModal = ref(false)
@@ -272,13 +273,29 @@ const stats = [
 ]
 
 const startCreating = () => {
-  // 跳转到简历创建页
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    // 直接打开登录框，设置重定向参数
+    openAuthModal()
+    // 设置重定向参数到当前路由
+    router.push({ path: '/', query: { redirect: '/resume' } })
+    return
+  }
+  // 已登录，直接跳转
   router.push('/resume')
 }
 
 const startExperience = () => {
-  // 跳转到AI助手页面
-  router.push('/resume')
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    // 直接打开登录框，设置重定向参数
+    openAuthModal()
+    // 设置重定向参数到当前路由
+    router.push({ path: '/', query: { redirect: '/interview' } })
+    return
+  }
+  // 已登录，直接跳转
+  router.push('/interview')
 }
 
 // 观看演示（暂时显示提示）
@@ -289,21 +306,45 @@ const watchDemo = () => {
 
 // 功能卡片导航
 const navigateToFeature = (featureType) => {
+  let targetPath = '/resume'
+
   switch (featureType) {
-    case 'Smart Generation':
+    case 'Resume Generation':
+      targetPath = '/resume'
+      break
     case 'AI Enhancement':
-      router.push('/resume')
+      targetPath = '/ai-agent'
       break
     case 'Mock Interview':
-      router.push('/interview')
+      targetPath = '/interview'
       break
     default:
-      router.push('/resume')
+      targetPath = '/resume'
   }
+
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    // 直接打开登录框，设置重定向参数
+    openAuthModal()
+    // 设置重定向参数到当前路由
+    router.push({ path: '/', query: { redirect: targetPath } })
+    return
+  }
+  // 已登录，直接跳转
+  router.push(targetPath)
 }
 
 // 优化按钮导航
 const navigateToOptimize = () => {
+  // 检查登录状态
+  if (!userStore.isLoggedIn) {
+    // 直接打开登录框，设置重定向参数
+    openAuthModal()
+    // 设置重定向参数到当前路由
+    router.push({ path: '/', query: { redirect: '/resume' } })
+    return
+  }
+  // 已登录，直接跳转
   router.push('/resume')
 }
 
@@ -316,6 +357,12 @@ const showSuccess = (message) => {
   }, 3000)
 }
 
+// 打开认证模态框
+const openAuthModal = () => {
+  authErrorMessage.value = '' // 清除之前的错误信息
+  showAuthModal.value = true
+}
+
 // 关闭认证模态框
 const closeAuthModal = () => {
   showAuthModal.value = false
@@ -324,14 +371,9 @@ const closeAuthModal = () => {
   // 检查是否有重定向参数，登录成功后跳转
   if (route.query.redirect) {
     const redirectPath = String(route.query.redirect)
-    router.push(redirectPath)
+    // 清除查询参数，避免重复重定向
+    router.push({ path: redirectPath, replace: true })
   }
-}
-
-// 打开认证模态框
-const openAuthModal = () => {
-  authErrorMessage.value = '' // 清除之前的错误信息
-  showAuthModal.value = true
 }
 
 // 登录处理
@@ -348,7 +390,8 @@ const handleLogin = async (loginData) => {
     // 登录成功后，如果有重定向参数，跳转到目标页面
     if (route.query.redirect) {
       const redirectPath = String(route.query.redirect)
-      router.push(redirectPath)
+      // 使用 replace 避免在历史记录中留下重定向页面
+      router.push({ path: redirectPath, replace: true })
     }
   } else {
     console.error('Login failed:', result.error)
@@ -371,7 +414,8 @@ const handleRegister = async (registerData) => {
     // 注册成功后，如果有重定向参数，跳转到目标页面
     if (route.query.redirect) {
       const redirectPath = String(route.query.redirect)
-      router.push(redirectPath)
+      // 使用 replace 避免在历史记录中留下重定向页面
+      router.push({ path: redirectPath, replace: true })
     }
   } else {
     console.error('Registration failed:', result.error)
@@ -390,16 +434,6 @@ const handleLogout = async () => {
     console.error('Logout failed:', result.error)
   }
 }
-
-// 监听路由参数变化
-watch(() => route.query, (newQuery) => {
-  if (newQuery.showLogin === 'true' && !userStore.isLoggedIn) {
-    // 显示登录提示
-    showSuccess('Please login first to access this page')
-    // 自动打开登录模态框
-    openAuthModal()
-  }
-}, { immediate: true })
 
 // 组件挂载时检查登录状态
 onMounted(() => {

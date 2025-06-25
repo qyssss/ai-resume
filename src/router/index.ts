@@ -18,7 +18,7 @@ const router = createRouter({
       name: 'resume',
       component: () => import('../views/ResumeForm.vue'),
       meta: {
-        requiresAuth: true // 需要登录才能访问
+        requiresAuth: false // 需要登录才能访问
       }
     },
     {
@@ -26,7 +26,7 @@ const router = createRouter({
       name: 'ai-agent',
       component: () => import('../views/AgentPage.vue'),
       meta: {
-        requiresAuth: true // 需要登录才能访问
+        requiresAuth: false // 需要登录才能访问
       }
     },
     {
@@ -34,7 +34,7 @@ const router = createRouter({
       name: 'interview',
       component: () => import('../views/InterviewPage.vue'),
       meta: {
-        requiresAuth: true // 需要登录才能访问
+        requiresAuth: false // 需要登录才能访问
       }
     },
     {
@@ -66,7 +66,7 @@ const router = createRouter({
       name: 'jobs',
       component: () => import('../views/JobCenter.vue'),
       meta: {
-        requiresAuth: true
+        requiresAuth: false  // 需要登录才能访问
       }
     }
   ]
@@ -99,12 +99,11 @@ router.beforeEach(async (to, from, next) => {
         }
       }
 
-      // 未登录，重定向到首页并显示登录提示
+      // 未登录，重定向到首页
       next({
         path: '/',
         query: {
-          redirect: to.fullPath,
-          showLogin: 'true'
+          redirect: to.fullPath
         }
       })
       return
