@@ -409,38 +409,20 @@ const handleOptimize = async () => {
     }
     optimizing.value = true;
     try {
-        // 1. 创建优化任务，拿到task_id
-        const startRes = await resumeApi.optimizeResumeStart();
-        console.log('optimizeResumeStart 返回：', startRes);
-        const taskId = startRes?.task_id;
-        if (!taskId) throw new Error('Failed to get task_id, response: ' + JSON.stringify(startRes));
-        // 2. 轮询获取优化结果
-        let pollCount = 0;
-        const maxPoll = 60; // 最多轮询60次（约1分钟）
-        let pollResult = null;
-        while (pollCount < maxPoll) {
-            await new Promise(r => setTimeout(r, 1500));
-            const pollRes = await resumeApi.optimizeResumePoll(taskId);
-            if (pollRes.status === 'done') {
-                pollResult = pollRes.result;
-                break;
-            } else if (pollRes.status === 'failed') {
-                throw new Error('AI optimization failed.');
-            }
-            pollCount++;
-        }
-        if (!pollResult) throw new Error('AI optimization timed out. Please try again later.');
+        // Call the real API to get optimization suggestions
+        const optimizedData = await resumeApi.optimizeResume();
 
-        // 展示优化结果
+        // Fill the comparison modal with the returned data
         originalResumeState.value = JSON.parse(JSON.stringify(resume.$state));
-        optimizedResumeState.value = pollResult;
+        optimizedResumeState.value = optimizedData;
+
         showOptimizeModal.value = true;
-    } catch (error: any) {
-        ElMessage.error(error.message || 'Failed to get AI optimization suggestions. Please try again later.');
-        console.error('Error occurred while requesting resume optimization suggestions:', error);
+
+    } catch (error) {
+        ElMessage.error('Failed to get AI optimization suggestions. Please try again later.');
+        console.error("Error occurred while requesting resume optimization suggestions:", error);
     } finally {
         optimizing.value = false;
-        ElMessage.success('AI optimization completed!');
     }
 }
 
