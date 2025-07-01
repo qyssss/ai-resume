@@ -380,6 +380,19 @@ const handlePhotoChange = (file: any) => {
 }
 
 const beforePhotoUpload = async (file: File) => {
+    // 校验图片类型
+    const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
+    if (!isImage) {
+        ElMessage.error('Only JPG/PNG/GIF images are allowed!');
+        return false;
+    }
+    // 校验图片大小（如2MB）
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+        ElMessage.error('Image size must be less than 2MB!');
+        return false;
+    }
+
     const formData = new FormData()
     formData.append('file', file) // 这里用 file 字段，后端也用 file 字段接收
     try {

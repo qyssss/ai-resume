@@ -38,4 +38,5 @@ HomeView 和 MainLayout 需要统一登录弹窗的逻辑，否则体验不一�
 问题本质：watch 只在 selectedJob 变化时触发，点同一个 job 不会触发。
 解决办法：点击时直接设置 drawerVisible = true，不依赖 selectedJob 的变化。
 
-
+8.新增注册邮箱校验（和后端尽可能统一，顶级域名要求大于2位），
+新增上传简历图片校验：png/jpg/gif
