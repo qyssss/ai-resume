@@ -7,7 +7,7 @@
         <div v-if="!loading && recommendedJobs.length > 0" class="space-y-6">
             <el-alert title="Based on your resume, we recommend the following positions" type="success"
                 :closable="false" class="mb-6" />
-            <div v-for="job in recommendedJobs" :key="job.id" class="job-card" @click="selectedJob = job">
+            <div v-for="job in recommendedJobs" :key="job.id" class="job-card" @click="onJobClick(job)">
                 <div class="flex-grow">
                     <div class="flex justify-between items-start">
                         <h3 class="text-xl font-bold text-purple-300">{{ job.title }}</h3>
@@ -119,12 +119,13 @@ const fetchRecommendations = async () => {
     }
 };
 
+const onJobClick = (job: JobRecommendation) => {
+    selectedJob.value = job;
+    drawerVisible.value = true;
+};
+
 onMounted(() => {
     fetchRecommendations();
-});
-
-watch(selectedJob, (newVal: JobRecommendation | null) => {
-    drawerVisible.value = !!newVal;
 });
 </script>
 

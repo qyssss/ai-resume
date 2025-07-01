@@ -31,3 +31,9 @@ HomeView 和 MainLayout 需要统一登录弹窗的逻辑，否则体验不一�
 在 MainLayout.vue 中引入 <AuthModal />，并实现 showAuthModal、authErrorMessage、openAuthModal、closeAuthModal、handleLogin、handleRegister 等逻辑，与 HomeView 保持一致。
 
 5. 部署修复: 进入路由，比如/jobs,刷新后页面404，配置vercel.json文件
+
+6. 简历页面滑动，预览的简历不跟着下滑，进行修复
+
+7. 工作推荐点击同个工作不弹出抽屉（具体描述）：
+问题本质：watch 只在 selectedJob 变化时触发，点同一个 job 不会触发。
+解决办法：点击时直接设置 drawerVisible = true，不依赖 selectedJob 的变化。
