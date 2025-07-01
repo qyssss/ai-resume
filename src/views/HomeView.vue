@@ -25,10 +25,10 @@
               </router-link>
             </div>
           </div>
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-4 flex-wrap">
             <!-- 登录/注册按钮 -->
             <button v-if="!userStore.isLoggedIn" @click="openAuthModal"
-              class="px-4 py-2 rounded-full bg-gray-800 text-white font-medium hover:bg-gray-700 transition">
+              class="px-4 py-2 rounded-full bg-gray-800 text-white font-medium hover:bg-gray-700 transition mr-2">
               Login/Register
             </button>
             <!-- 用户信息 -->
@@ -45,7 +45,7 @@
               </button>
             </div>
             <button @click="startExperience"
-              class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition">
+              class="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white font-medium hover:shadow-lg hover:shadow-purple-500/30 transition mr-2">
               Try Now
             </button>
           </div>

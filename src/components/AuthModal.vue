@@ -389,6 +389,12 @@ const handleRegister = async () => {
         return
     }
 
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailPattern.test(registerForm.value.email)) {
+        showError('Please enter a valid email address');
+        return;
+    }
+
     if (!isPasswordMatch.value) {
         showError('The passwords do not match')
         return
