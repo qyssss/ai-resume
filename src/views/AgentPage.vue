@@ -304,21 +304,63 @@ const sendMessage = async () => {
     // 只在 prompt 里拼接简历信息，不在 UI 显示
     let prompt = userInput.value.trim();
     if (currentMode.value === 'resume') {
-        prompt = `Here is my resume information:\n` +
-            `Personal Information: ${JSON.stringify(resumeStore.personal)}\n` +
-            `Skills: ${JSON.stringify(resumeStore.skills)}\n` +
-            `Education: ${JSON.stringify(resumeStore.education)}\n` +
-            `Experience: ${JSON.stringify(resumeStore.experiences)}\n` +
-            `Self-evaluation: ${resumeStore.selfEvaluation}\n` +
-            `Based on the resume information above, ${userInput.value.trim()}. Please reply in English.`;
+        // 针对自我评价优化
+        if (userInput.value.toLowerCase().includes('self-evaluation')) {
+            prompt = `
+Here are some examples of how to optimize a self-evaluation:
+
+Example 1:
+Original: I am hardworking and responsible.
+Analysis: The statement is too general and lacks specific achievements.
+Improved: I am a dedicated software engineer with a proven track record of delivering high-quality projects on time. My strong problem-solving skills and attention to detail have contributed to successful team outcomes.
+
+Example 2:
+Original: I have good communication skills.
+Analysis: The statement is vague and does not provide evidence.
+Improved: I have demonstrated excellent communication skills by leading cross-functional meetings and presenting project results to stakeholders.
+
+Now, here is my self-evaluation: ${resumeStore.selfEvaluation}
+Please analyze it and provide an improved version in English, following the example above.
+            `.trim();
+        } else if (userInput.value.toLowerCase().includes('skills')) {
+            // 针对技能优化
+            prompt = `
+Here is my skills section: ${JSON.stringify(resumeStore.skills)}
+
+Please analyze the strengths and weaknesses of my skills section, and then provide an improved version in English. 
+First, list the strengths and weaknesses. 
+Then, suggest specific improvements. 
+Finally, provide the improved skills section.
+            `.trim();
+        } else if (userInput.value.toLowerCase().includes('experience')) {
+            // 针对项目/经历优化
+            prompt = `
+Here is my experience section: ${JSON.stringify(resumeStore.experiences)}
+
+Please analyze the strengths and weaknesses of my experience section, and then provide an improved version in English. 
+First, list the strengths and weaknesses. 
+Then, suggest specific improvements. 
+Finally, provide the improved experience section.
+            `.trim();
+        } else {
+            // 默认COT
+            prompt = `Here is my resume information:\n` +
+                `Personal Information: ${JSON.stringify(resumeStore.personal)}\n` +
+                `Skills: ${JSON.stringify(resumeStore.skills)}\n` +
+                `Education: ${JSON.stringify(resumeStore.education)}\n` +
+                `Experience: ${JSON.stringify(resumeStore.experiences)}\n` +
+                `Self-evaluation: ${resumeStore.selfEvaluation}\n` +
+                `Based on the resume information above, please analyze the strengths and weaknesses step by step, and then provide specific suggestions for improvement. Please reply in English.`;
+        }
     } else if (currentMode.value === 'interview') {
+        // 面试模式可加COT
         prompt = `You are now an interviewer. The candidate's resume information is as follows:\n` +
             `Personal Information: ${JSON.stringify(resumeStore.personal)}\n` +
             `Skills: ${JSON.stringify(resumeStore.skills)}\n` +
             `Education: ${JSON.stringify(resumeStore.education)}\n` +
             `Experience: ${JSON.stringify(resumeStore.experiences)}\n` +
             `Self-evaluation: ${resumeStore.selfEvaluation}\n` +
-            `Based on this information, ${userInput.value.trim()}. Please ask questions and reply in English.`;
+            `Please ask interview questions one by one, and after each answer, provide feedback and suggestions for improvement. Please reply in English.`;
     }
 
     // UI 只显示用户输入

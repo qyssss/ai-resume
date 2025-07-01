@@ -37,3 +37,5 @@ HomeView 和 MainLayout 需要统一登录弹窗的逻辑，否则体验不一�
 7. 工作推荐点击同个工作不弹出抽屉（具体描述）：
 问题本质：watch 只在 selectedJob 变化时触发，点同一个 job 不会触发。
 解决办法：点击时直接设置 drawerVisible = true，不依赖 selectedJob 的变化。
+
+
