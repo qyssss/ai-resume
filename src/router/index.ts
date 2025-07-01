@@ -18,7 +18,7 @@ const router = createRouter({
       name: 'resume',
       component: () => import('../views/ResumeForm.vue'),
       meta: {
-        requiresAuth: true // 需要登录才能访问
+        requiresAuth: false // 需要登录才能访问
       }
     },
     {

@@ -202,7 +202,7 @@
                     </el-form>
                 </div>
             </el-col>
-            <el-col :span="12" class="sticky-preview pt-14">
+            <el-col :span="12" class="relative sticky-preview pt-14">
                 <ResumePreview />
             </el-col>
         </el-row>

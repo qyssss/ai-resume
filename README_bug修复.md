@@ -29,3 +29,5 @@ HomeView 组件通过监听路由参数变化（watch route.query）来弹出登
 HomeView 和 MainLayout 需要统一登录弹窗的逻辑，否则体验不一致。
 修复方法：
 在 MainLayout.vue 中引入 <AuthModal />，并实现 showAuthModal、authErrorMessage、openAuthModal、closeAuthModal、handleLogin、handleRegister 等逻辑，与 HomeView 保持一致。
+
+5. 部署修复: 进入路由，比如/jobs,刷新后页面404，配置vercel.json文件

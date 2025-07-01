@@ -1,5 +1,5 @@
 <template>
-    <div ref="draggableBox" :style="boxStyle" class="fixed z-50 cursor-move" @mousedown="onMouseDown">
+    <div ref="draggableBox" :style="boxStyle" class="absolute z-50 cursor-move" @mousedown="onMouseDown">
         <div class="w-[794px] flex justify-end pt-3 pb-3">
             <el-button type="primary" @click="exportPDF">Export to PDF</el-button>
         </div>
@@ -11,7 +11,7 @@
                 <div>
                     <h1 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-wide">{{ resume.personal.name ||
                         'Name'
-                        }}</h1>
+                    }}</h1>
                     <div class="text-gray-700 text-lg mb-1">
                         {{ resume.personal.degree || 'Degree' }} | {{ resume.personal.gender || 'Gender' }} | {{
                             resume.personal.age || 'Age' }}
@@ -91,16 +91,9 @@ const pdfContent = ref<HTMLElement | null>(null)
 const draggableBox = ref<HTMLElement | null>(null)
 const boxStyle = reactive<CSSProperties>({
     left: '0px',
-    top: '110px',
-    position: 'fixed',
-    zIndex: 50,
-})
-
-onMounted(() => {
-    // 让盒子靠左
-    const width = 10
-    const left = (window.innerWidth - width) / 2
-    boxStyle.left = `${left}px`
+    top: '0px', // 初始位置可根据需要调整
+    position: 'absolute',
+    zIndex: 10,
 })
 
 let startX = 0
