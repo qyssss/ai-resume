@@ -41,6 +41,7 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 import { jobApi, type AnalysisReport } from '@/services/jobApi';
+import { resumeApi } from '@/services/resume';
 
 const jobDescription = ref('');
 const loading = ref(false);
@@ -54,12 +55,29 @@ const progressColors = [
     { color: '#6f42c1', percentage: 100 },
 ];
 
+function isResumeEmpty(resume: any) {
+    // Check if key fields are empty (name, education, experiences)
+    return !resume.personal?.name || resume.personal.name.trim() === '' ||
+        (Array.isArray(resume.education) && resume.education.length === 0) ||
+        (Array.isArray(resume.experiences) && resume.experiences.length === 0);
+}
+
 /**
  * @description 调用API分析JD
  */
 const analyzeJob = async () => {
     if (!jobDescription.value.trim()) {
-        ElMessage.warning('请粘贴职位描述后再进行分析。');
+        ElMessage.warning('Please paste the job description before analysis.');
+        return;
+    }
+    try {
+        const resume = await resumeApi.getResume();
+        if (!resume || Object.keys(resume).length === 0) {
+            ElMessage.warning('Please save your resume first before analyzing job fit.');
+            return;
+        }
+    } catch (e) {
+        ElMessage.warning('Please save your resume first before analyzing job fit.');
         return;
     }
     loading.value = true;

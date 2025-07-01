@@ -49,14 +49,12 @@
 import { ref, onMounted, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { jobApi, type JobRecommendation } from '@/services/jobApi';
-import { useResumeStore } from '@/stores/resume';
+import { resumeApi } from '@/services/resume';
 
 const loading = ref(true);
 const recommendedJobs = ref<JobRecommendation[]>([]);
 const selectedJob = ref<JobRecommendation | null>(null);
 const drawerVisible = ref(false);
-
-const resumeStore = useResumeStore();
 
 // 批量翻译函数
 async function translateBatch(texts: string[], target = 'en'): Promise<string[]> {
@@ -124,8 +122,22 @@ const onJobClick = (job: JobRecommendation) => {
     drawerVisible.value = true;
 };
 
-onMounted(() => {
-    fetchRecommendations();
+onMounted(async () => {
+    loading.value = true;
+    try {
+        const resume = await resumeApi.getResume();
+        if (!resume || Object.keys(resume).length === 0) {
+            ElMessage.warning('Please save your resume first before getting job recommendations.');
+            recommendedJobs.value = [];
+            loading.value = false;
+            return;
+        }
+        await fetchRecommendations();
+    } catch (e) {
+        ElMessage.warning('Please save your resume first before getting job recommendations.');
+        recommendedJobs.value = [];
+        loading.value = false;
+    }
 });
 </script>
 
