@@ -3,6 +3,7 @@ import JobAnalysis from '../../src/components/JobAnalysis.vue'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ElMessage } from 'element-plus'
 import ElementPlus from 'element-plus'
+import { resumeApi } from '../../src/services/resume'
 
 // mock jobApi
 vi.mock('../../src/services/jobApi', () => ({
@@ -12,6 +13,14 @@ vi.mock('../../src/services/jobApi', () => ({
 }))
 import { jobApi } from '../../src/services/jobApi'
 const mockedJobApi = vi.mocked(jobApi, true)
+
+// mock resumeApi
+vi.mock('../../src/services/resume', () => ({
+    resumeApi: {
+        getResume: vi.fn()
+    }
+}))
+const mockedResumeApi = vi.mocked(resumeApi, true)
 
 // mock ElMessage
 vi.spyOn(ElMessage, 'warning')
@@ -28,6 +37,12 @@ function createWrapper() {
 describe('JobAnalysis.vue', () => {
     beforeEach(() => {
         vi.clearAllMocks()
+        // 默认 mock getResume 返回有效简历
+        mockedResumeApi.getResume.mockResolvedValue({
+            personal: { name: 'test' },
+            education: [{}],
+            experiences: [{}]
+        })
     })
 
     it('表单校验：未输入岗位描述时点击分析弹警告', async () => {
@@ -68,11 +83,11 @@ describe('JobAnalysis.vue', () => {
         const btn = wrapper.find('.el-button')
         await btn.trigger('click')
         // 按钮应为 loading 状态
-        expect(btn.attributes('disabled')).toBeDefined()
+        expect(btn.classes()).toContain('is-loading')
         // 结束 loading
         resolvePromise({ strengths: [], gaps: [], summary: '', matchScore: 0 })
         await flushPromises()
-        expect(btn.attributes('disabled')).toBeUndefined()
+        expect(btn.classes()).not.toContain('is-loading')
     })
 
     it('异常处理：分析接口报错弹出错误提示', async () => {

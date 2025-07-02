@@ -2,13 +2,26 @@ import { mount, flushPromises } from '@vue/test-utils';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTestingPinia } from '@pinia/testing';
 import JobRecommend from '../../src/components/JobRecommend.vue';
-import * as jobApiModule from '../../src/services/jobApi';
-import { ElMessage } from 'element-plus';
 
 // Mock ElMessage
 vi.mock('element-plus', () => ({
-    ElMessage: { info: vi.fn(), error: vi.fn() }
+    ElMessage: {
+        info: vi.fn(),
+        error: vi.fn(),
+        warning: vi.fn(),
+        success: vi.fn(),
+    }
 }));
+import { ElMessage } from 'element-plus';
+
+// mock resumeApi
+vi.mock('../../src/services/resume', () => ({
+    resumeApi: {
+        getResume: vi.fn()
+    }
+}))
+import { resumeApi } from '../../src/services/resume'
+const mockedResumeApi = vi.mocked(resumeApi, true)
 
 // mock fetch (for translateBatch)
 globalThis.fetch = vi.fn(() =>
@@ -31,6 +44,15 @@ globalThis.fetch = vi.fn(() =>
     })
 ) as any;
 
+// mock jobApi
+vi.mock('../../src/services/jobApi', () => ({
+    jobApi: {
+        getJobRecommendations: vi.fn()
+    }
+}))
+import { jobApi } from '../../src/services/jobApi'
+const mockedJobApi = vi.mocked(jobApi, true)
+
 describe('JobRecommend.vue', () => {
     const mockJobs = [
         {
@@ -48,10 +70,12 @@ describe('JobRecommend.vue', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+        // 默认有简历
+        mockedResumeApi.getResume.mockResolvedValue({ personal: { name: 'Tom' }, education: [{}], experiences: [{}] })
     });
 
     it('jobApi.getJobRecommendations 正常返回，断言 recommendedJobs', async () => {
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockResolvedValueOnce([...mockJobs]);
+        mockedJobApi.getJobRecommendations.mockResolvedValueOnce([...mockJobs]);
         const wrapper = mount(JobRecommend, {
             global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
         });
@@ -61,7 +85,7 @@ describe('JobRecommend.vue', () => {
     });
 
     it('jobApi.getJobRecommendations 返回空数组，断言 UI 显示 el-empty', async () => {
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockResolvedValueOnce([]);
+        mockedJobApi.getJobRecommendations.mockResolvedValueOnce([]);
         const wrapper = mount(JobRecommend, {
             global: {
                 plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })],
@@ -78,7 +102,7 @@ describe('JobRecommend.vue', () => {
     });
 
     it('jobApi.getJobRecommendations 报错，断言 ElMessage.error 被调用，recommendedJobs 为空', async () => {
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockRejectedValueOnce(new Error('API Error'));
+        mockedJobApi.getJobRecommendations.mockRejectedValueOnce(new Error('API Error'));
         const wrapper = mount(JobRecommend, {
             global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
         });
@@ -88,8 +112,7 @@ describe('JobRecommend.vue', () => {
     });
 
     it('loading 状态下 UI，断言 loading 时的提示文本', async () => {
-        // 让接口一直 pending，保持 loading
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockImplementation(() => new Promise(() => { }));
+        mockedJobApi.getJobRecommendations.mockImplementation(() => new Promise(() => { }));
         const wrapper = mount(JobRecommend, {
             global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
         });
@@ -97,7 +120,7 @@ describe('JobRecommend.vue', () => {
     });
 
     it('推荐岗位卡片渲染，断言岗位卡片内容、数量', async () => {
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockResolvedValueOnce([...mockJobs]);
+        mockedJobApi.getJobRecommendations.mockResolvedValueOnce([...mockJobs]);
         const wrapper = mount(JobRecommend, {
             global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
         });
@@ -112,7 +135,7 @@ describe('JobRecommend.vue', () => {
     });
 
     it('点击岗位卡片弹出抽屉，断言抽屉内容、visible 状态', async () => {
-        vi.spyOn(jobApiModule.jobApi, 'getJobRecommendations').mockResolvedValueOnce([...mockJobs]);
+        mockedJobApi.getJobRecommendations.mockResolvedValueOnce([...mockJobs]);
         const wrapper = mount(JobRecommend, {
             global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
         });
@@ -120,7 +143,16 @@ describe('JobRecommend.vue', () => {
         const card = wrapper.find('.job-card');
         await card.trigger('click');
         await flushPromises();
-        // 推荐直接断言抽屉内容文本
         expect(wrapper.text()).toContain('Frontend Developer');
+    });
+
+    it('无简历时提示保存简历', async () => {
+        mockedResumeApi.getResume.mockResolvedValueOnce({});
+        const wrapper = mount(JobRecommend, {
+            global: { plugins: [createTestingPinia({ stubActions: false, createSpy: vi.fn })] }
+        });
+        await flushPromises();
+        expect(ElMessage.warning).toHaveBeenCalledWith('Please save your resume first before getting job recommendations.');
+        expect(wrapper.findAll('.job-card')).toHaveLength(0);
     });
 });
